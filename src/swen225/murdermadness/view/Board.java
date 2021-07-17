@@ -1,7 +1,31 @@
 package swen225.murdermadness.view;
 
-
 public class Board {
+	private Tile[][] board;
+	
+	/**
+	 * Get the tile at a given position on the board. If the position is outside the
+	 * board dimensions, it just returns empty air.
+	 *
+	 * @param position Board position to get tile from
+	 * @return Tile at given position
+	 */
+	public Tile getTile(Position position) {
+		final int x = position.getX();
+		final int y = position.getY();
+		if (x < 0 || x > 23) { // Error check
+			System.out.println("Invalid position! X coordinate is out of the board.");
+			return null;
+		} 
+		else if (y < 0 || y > 23) { // Error check
+			System.out.println("Invalid position! Y coordinate is out of the board.");
+			return null;
+		} 
+		else {
+			return board[position.getY()][position.getX()];
+		}
+	}
+	
 	
 	public static String layout =
 	        ". . . . . . . . . . . . . . . . . . . . . . . ." + // 00
