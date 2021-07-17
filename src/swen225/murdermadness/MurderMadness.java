@@ -1,6 +1,7 @@
 package swen225.murdermadness;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import swen225.murdermadness.cards.Card;
+import swen225.murdermadness.cards.Character;
 import swen225.murdermadness.cards.CharacterCard;
 import swen225.murdermadness.cards.EstateCard;
 import swen225.murdermadness.cards.WeaponCard;
@@ -26,8 +28,10 @@ import swen225.murdermadness.view.*;
 public class MurderMadness {
 	
 	private static int Players = 0; // this can be minimum 3 max of 6
+	
+	
 	private List<String> characterNames = new ArrayList<String>(Arrays.asList("Lucilla", "Bert",
-            "Melina", "percy"));
+            "Melina", "Percy")); // this also indicates the order of turns
 	
 	private List<String> weaponNames = new ArrayList<String>(Arrays.asList("Broom", "Scissors",
             "Knife", "Shovel", "Ipad"));
@@ -41,28 +45,88 @@ public class MurderMadness {
 	
     public MurderMadness() {
     	// TESTING
-    	onAccusation(null);
+    	//onAccusation(null);
     	
-    	// TODO: Ask user preliminary stuff i.e. total players playing..etc
-    	setup(4);
+    	//Ask user preliminary stuff i.e. total players playing..etc
+    	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    	System.out.println("How many players?");
+    	try { 
+    		setup(input.read());
+    		input.close(); 
+    		} 
+    	catch (IOException e) { e.printStackTrace(); }
     }
     
+    
     void setup(int totalPlayers) {
+    	
+    	List<String> remainingChars = new ArrayList<String>();
+    	remainingChars.addAll(characterNames);
 
-    	// Initialize Players
+    	// Initialize Players, players can input which characters they wish to play as
     	players = new ArrayList<Player>();
     	for (int i = 0;i < characterNames.size();i++) {
-    		Player p = new Player(); // TODO: Update when Player Class Finished
-    		players.add(p);
+    		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    		try {
+				System.out.println("-------------------------------------------------------------");
+				System.out.println("Player "+i+": CHOOSE YOUR CHARACTER");
+	    		System.out.println(remainingChars);
+	    		while(true) {
+	    			boolean found = false;
+	    			String inName = input.readLine().trim();
+		    		for(String name : remainingChars){
+		    			
+		    			if(inName.equalsIgnoreCase(name)){
+		    				Player p = new Player(new Character(name));
+		    				players.add(p);
+		    				remainingChars.remove(name);
+		    				found = true;
+		    				break;
+		    			}
+		    		}
+		    		if(found) { break; }
+		    		else {
+		    			System.out.println("Invalid character name, please choose a character from the list!");
+		    		}
+    			}
+	    		System.out.println("-------------------------------------------------------------");
+	    		
+    		} catch(Exception e) {
+    			System.out.println("Invalid Input: "+e.getMessage());
+    			continue;
+        	}
+    		
     	}
     	
+    	initializeCards();
+		game = new Board();
+		game.show();
+    }
+    
+    /*
+     * Initialize the cards, the murder scenario and the hands that the players
+     * will be dealt
+     */
+    public void initializeCards() {
     	// Initialize & Store Respective Cards
     	murderSolution = new HashSet<Card>();
+    	
 		List<WeaponCard> weapons = new ArrayList<WeaponCard>();
-		List<CharacterCard> characters = new  ArrayList<CharacterCard>();
-		List<EstateCard> estates = new  ArrayList<EstateCard>();
+		for(String w : weaponNames) {
+			weapons.add(new WeaponCard(w));
+		}
 		
-		// TODO: Initialize Cards
+		List<CharacterCard> characters = new  ArrayList<CharacterCard>();
+		// adds the relevant player characters that have been selected by the players (characters that are
+		// actually in the game)
+		for(Player p : players) {
+			characters.add(new CharacterCard(p.getCharacter()));
+		}
+		
+		List<EstateCard> estates = new  ArrayList<EstateCard>();
+		for(String es : estateNames) {
+			//TODO load data on the positions of the estates?
+		}
 		
 		// Set up Murder Circumstances
 		Random ran = new Random();
@@ -72,19 +136,16 @@ public class MurderMadness {
 		murderSolution.add(estates.remove(ran.nextInt(estates.size())));
 		
 		// Distribute Remaining Cards to Players
-
 		List<Card> remaining = new ArrayList<Card>();
 		remaining.addAll(weapons);remaining.addAll(characters);remaining.addAll(estates);
 		
-		
-		for (Card c: remaining) {
-			for (Player p: players) {
-				// TODO: p.addHand(c);
+		while(!remaining.isEmpty()) {
+			for(Player p : players) {
+				if(remaining.isEmpty()) { break; }
+				p.addToHand(remaining.get(0));
+				remaining.remove(0);
 			}
 		}
-		
-		game = new Board();
-		game.show();
     }
 
     /*

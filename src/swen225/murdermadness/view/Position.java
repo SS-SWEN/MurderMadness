@@ -2,43 +2,36 @@ package swen225.murdermadness.view;
 
 public class Position {
 	
-	/**
-	 * Stores the X coordinate of the position.
-	 */
-	public final int x;
+	private int x;
+	private int y;
 	
-	/**
-	 * Stores the Y coordinate of the position.
-	 */
-	public final int y;
+	public int getX() { return x; }
+
+	public int getY() { return y; }
 	
+	public boolean isValid() {
+		return x > 0 && x <= 24 && y > 0 && y <= 24;
+	}
 	
-	/**
-	 * Construct position on the board
-	 *
-	 * @param x X coordinate of position
-	 * @param y Y coordinate of position
-	 */
+	public boolean equals(Object o) {
+		if(o instanceof Position) { 
+			Position p = (Position)o;
+			return (this.getX() == p.getX() && this.getY() == p.getY());
+		} 
+		return false;
+		
+	}
+
 	public Position(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	/**
-	 * Get the X-coordinate of this position.
-	 *
-	 * @return X-coordinate
-	 */
-	public int getX() {
-		return this.x;
+	public int xySum() {
+		return this.getX()+this.getY();
 	}
 	
-	/**
-	 * Get the Y-coordinate of this position.
-	 *
-	 * @return Y-coordinate
-	 */
-	public int getY() {
-		return this.y;
+	public String toString() {
+		return "("+this.x+","+this.y+")";
 	}
 }
