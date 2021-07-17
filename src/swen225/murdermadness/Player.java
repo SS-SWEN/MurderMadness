@@ -52,5 +52,58 @@ public class Player {
 		this.playerCharacter = playerCharacter;
 	}
 	
+	/**
+     * Player movement Below --------------------------------------------------------------
+     */
+	
+	/**
+     * Shorthand representation of this player for
+     * displaying the player on the board
+     */
+    public String display() {
+    	String s = this.playerCharacter.getName();
+        return "" + s.charAt(0);
+    }
+    
+	/**
+     * Number of steps this player has left
+     */
+    private int stepsRemaining = 0;
+    
+    /**
+     * Check whether this player still has steps
+     */
+    public boolean hasRemainingSteps() {
+        return this.stepsRemaining > 0;
+    }
+    
+    /**
+     * Set the number of steps this player rolled on the die
+     */
+    public void setStepsRemaining(int steps) {
+        this.stepsRemaining = steps;
+    }
+    
+    /**
+     * Get the amount of steps this player has remaining
+     * @return the integer number of steps
+     */
+    public int getStepsRemaining() {
+        return stepsRemaining;
+    }
+    
+    /**
+     * X and Y coordinates of the player
+     */
+    public int x, y;
+    
+    /**
+     * Updates the x and y coordinates of this player
+     */
+    public void updateLocation(Position p) {
+    	this.x = p.getX();
+        this.y = p.getY();
+    }
+	
 
 }
