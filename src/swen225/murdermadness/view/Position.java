@@ -10,7 +10,7 @@ public class Position {
 	public int getY() { return y; }
 	
 	public boolean isValid() {
-		return x >= 0 && x <= 24 && y >= 0 && y <= 24;
+		return x >= 0 && x <= 23 && y >= 0 && y <= 23;
 	}
 	
 	public boolean equals(Object o) {
