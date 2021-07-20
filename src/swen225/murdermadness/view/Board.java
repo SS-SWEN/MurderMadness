@@ -229,8 +229,7 @@ public class Board {
     
     public boolean movePlayer(Player player, Direction direction, int steps) {
     	for (int i = 0;i < steps;i++) {
-			Tile next = getNewLocation(player.getPos(), direction);
-	    	//System.out.println(next.getPos().getX() + " AND " + next.getPos().getY());
+		Tile next = getNewLocation(player.getPos(), direction);
 	    	if(next == null) { return false; }
 	    	if(next.isObstruction()) {
 	    		System.out.println("There is a wall there!");
