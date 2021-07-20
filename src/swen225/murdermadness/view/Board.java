@@ -199,18 +199,9 @@ public class Board {
 	 * @return Tile at given position
 	 */
 	public Tile getTile(Position position) {
-		final int x = position.getX();
-		final int y = position.getY();
-		if (x < 0 || x > 23) { // Error check
-			System.out.println("Invalid position! X coordinate is out of the board.");
-			return null;
-		} 
-		else if (y < 0 || y > 23) { // Error check
-			System.out.println("Invalid position! Y coordinate is out of the board.");
-			return null;
-		} 
+		if(!position.isValid()) {return null;}
 		else {
-			return board[position.getY()][position.getX()];
+			return board[position.getX()][position.getY()];
 		}
 	}
 	
@@ -220,32 +211,32 @@ public class Board {
     public Tile getNewLocation(Position current, int direction) {
     	final int x = current.getX();
 		final int y = current.getY();
-
-        switch (direction) {
-            case 1:
-                return board[current.getX()-1][current.getY()];  //north
-            case 2:
-                return board[current.getX()][current.getY()+1];//east
-            case 3:
-                return board[current.getX()+1][current.getY()];//south
-            case 4:
-                return board[current.getX()][current.getY()-1]; //west
-            default:
-                return null;
-        }
-    }
-
-	public boolean movePlayer(Player player, int direction) {
-		Position oldP = player.getCharacter().getPos();
-		System.out.println(oldP);
-		Tile oldT = getTile(oldP);
-		Tile newT = getNewLocation(oldP,direction);
 		
-		player.getCharacter().setPos(newT.getPos());;
-		System.out.println(player.getCharacter().getPos());
-
-		return false;
+		switch (direction) {
+        case 1://north
+            return getTile(new Position(x, y-1));
+        case 2://east
+            return getTile(new Position(x+1, y));
+        case 3://south
+            return getTile(new Position(x, y+1));
+        case 4: //west
+            return getTile(new Position(x-1, y));
+        default:
+            return null;
+		}
+    }
+    
+    public boolean movePlayer(Player player, int direction, int steps) {
+		Tile next = getNewLocation(player.getPos(), direction);
+    	
+    	if(next == null) { return false; }
+    	if(next.isObstruction()) { return false; }
+    	if(next.getPos().equals(player.getPrevPos())) { return false;}
+    	
+    	player.updateLocation(next.getPos());
+    	return true;
 	}
+    
     
     
 

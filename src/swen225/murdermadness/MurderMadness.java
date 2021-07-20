@@ -1,6 +1,7 @@
 package swen225.murdermadness;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.util.Scanner;
 import java.util.Set;
 
 import swen225.murdermadness.cards.Card;
-import swen225.murdermadness.cards.Character;
 import swen225.murdermadness.cards.CharacterCard;
 import swen225.murdermadness.cards.EstateCard;
 import swen225.murdermadness.cards.WeaponCard;
@@ -28,8 +28,7 @@ import swen225.murdermadness.view.*;
  */
 public class MurderMadness {
 	
-	private static int Players = 0; // this can be minimum 3 max of 6
-	
+	private static int numPlayers = 0; // this can be minimum 3 max of 6
 	
 	private static List<String> characterNames = new ArrayList<String>(Arrays.asList("Lucilla", "Bert",
             "Melina", "Percy")); // this also indicates the order of turns
@@ -45,21 +44,21 @@ public class MurderMadness {
 	private List<Player> players;
 	
     public MurderMadness() {
-    	// TESTING
-    	//onAccusation(null);
-    	
     	//Ask user preliminary stuff i.e. total players playing..etc
-    	
     	game = new Board();
 		game.show();
-		
-		
-		
 		
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("How many players?");
     	try { 
-    		setup(input.read());
+    		while(true) {
+    			numPlayers = Integer.parseInt(input.readLine());
+    			if(numPlayers > 0 && numPlayers < 5) { break; }
+    			else {
+    				System.out.println("Invalid number of players; Please input between 1-4.");
+    			}
+    		}
+    		setup();
     		runGame();
     		input.close(); 
     		} 
@@ -68,54 +67,75 @@ public class MurderMadness {
     
      //playerMovement-------------------------------------------------
     private void runGame() {
-    	int numberOfPlayers = 4;
-    	while (numberOfPlayers > 1) {
+    	int numberOfPlayers = numPlayers;
+    	for(int i = 0; i < numPlayers; i++) {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
-    		Player p1 = players.get(0);
-    		p1.setStepsRemaining(roll);
-    		System.out.println(p1.getCharacter().getPos().getX() + " "+ p1.getCharacter().getPos().getY());
-    		doAction(p1);
-    		System.out.println(p1.getCharacter().getPos().getX() + " "+ p1.getCharacter().getPos().getY());
+    		Player p = players.get(i);
+    		p.setStepsRemaining(roll);
+    		System.out.println(p.getPos());
+    		doAction(p);
+    		System.out.println(p.getPos());
     	}
     }
+    
     public static final Scanner userInput = new Scanner(System.in);
+    
     private static void doAction(Player player) {
-    	while (player.hasRemainingSteps()) {
-    		String moveSummary = "invalid move!";
-    		player.turnOver = false;
-    		System.out.print("Direction: ");
+    	player.turnOver = false;
+    	System.out.println(player.getName()+"'s Turn");
     		
-    		switch (userInput.next().toLowerCase()) {
-            case "w":
-                if (game.movePlayer(player, 1)) { //north
-                    moveSummary = "Player " + player.display() + " moved north";
-                }
-                break;
-            case "d":
-                if (game.movePlayer(player, 2)) { //east
-                    moveSummary = "Player " + player.display() + " moved east";
-                }
-                break;
-            case "s":
-                if (game.movePlayer(player, 3)) { //south
-                    moveSummary = "Player " + player.display() + " moved south";
-                }
-                break;
-            case "a":
-                if (game.movePlayer(player, 4)) { //west
-                    moveSummary = "Player " + player.display() + " moved west";
-                }
-                break;
-            default:
-                moveSummary = "Invalid input!";
-        }
+    	while (player.hasRemainingSteps()) {
+    		System.out.println("Steps reamining: "+player.getStepsRemaining());
+    		
+    		String moveSummary = "invalid move!";
+    		
+    		System.out.print("Direction: ");
+    		String dir = userInput.next().toLowerCase();
+    		
+			System.out.print("Number of Steps: ");
+    		int steps = Integer.parseInt(userInput.next());
+    		
+    		if(steps > player.getStepsRemaining()) { System.out.println("You don't have enough steps!");}
+    		
+    		else {
+    			boolean blocked = false;
+    			
+    			for(int i = 0; i <= steps; i++){
+    				switch (dir) {
+                    case "w":
+                        if (game.movePlayer(player, 1, steps)) { //north
+                            moveSummary = "Player " + player.display() + " moved north"; }
+                        else { blocked = true; }
+                    case "d":
+                        if (game.movePlayer(player, 2, steps)) { //east
+                            moveSummary = "Player " + player.display() + " moved east"; }
+                        else { blocked = true; }
+                    case "s":
+                        if (game.movePlayer(player, 3, steps)) { //south
+                            moveSummary = "Player " + player.display() + " moved south"; }
+                        else { blocked = true; }
+                    case "a":
+                        if (game.movePlayer(player, 4, steps)) { //west
+                            moveSummary = "Player " + player.display() + " moved west"; }
+                        else { blocked = true; }
+                    default:
+                        moveSummary = "Invalid input!";
+            		}
+    				
+    				// path wasn't blocked, decrement steps remaining
+    				if(!blocked) {
+    					steps--;
+                        player.decrementStep();
+    				}
+    				else { break; }
+    			}
+    		}
     	}
-    	
-    	
+    	//space for next player
+    	System.out.println("----------------------------------");
     }
     
-    
-    void setup(int totalPlayers) {
+    void setup() {
     	
     	game = new Board();
 		game.show();
@@ -125,11 +145,11 @@ public class MurderMadness {
 
     	// Initialize Players, players can input which characters they wish to play as
     	players = new ArrayList<Player>();
-    	for (int i = 0;i < characterNames.size();i++) {
+    	for (int i = 0; i < numPlayers; i++) {
     		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     		try {
 				System.out.println("-------------------------------------------------------------");
-				System.out.println("Player "+i+": CHOOSE YOUR CHARACTER");
+				System.out.println("Player "+(i+1)+": CHOOSE YOUR CHARACTER");
 	    		System.out.println(remainingChars);
 	    		while(true) {
 	    			boolean found = false;
@@ -137,7 +157,7 @@ public class MurderMadness {
 		    		for(String name : remainingChars){
 		    			
 		    			if(inName.equalsIgnoreCase(name)){
-		    				Player p = new Player(new Character(name));
+		    				Player p = new Player(name);
 		    				players.add(p);
 		    				remainingChars.remove(name);
 		    				found = true;
@@ -180,15 +200,15 @@ public class MurderMadness {
 		// adds the relevant player characters that have been selected by the players (characters that are
 		// actually in the game)
 		for(Player p : players) {
-			characters.add(new CharacterCard(p.getCharacter()));
-			if (p.getCharacter().getName().equalsIgnoreCase("lucilla")) {
-				p.getCharacter().setPos(new Position(1,12));
-			} else if (p.getCharacter().getName().equalsIgnoreCase("percy")) {
-				p.getCharacter().setPos(new Position(15,22));
-			} else if (p.getCharacter().getName().equalsIgnoreCase("melina")) {
-				p.getCharacter().setPos(new Position(22,9));
-			} else if (p.getCharacter().getName().equalsIgnoreCase("bert")) {
-				p.getCharacter().setPos(new Position(8,1));
+			characters.add(new CharacterCard(p.getName()));
+			if (p.getName().equalsIgnoreCase("lucilla")) {
+				p.setPos(new Position(1,12));
+			} else if (p.getName().equalsIgnoreCase("percy")) {
+				p.setPos(new Position(15,22));
+			} else if (p.getName().equalsIgnoreCase("melina")) {
+				p.setPos(new Position(22,9));
+			} else if (p.getName().equalsIgnoreCase("bert")) {
+				p.setPos(new Position(8,1));
 			}
 		}
 		

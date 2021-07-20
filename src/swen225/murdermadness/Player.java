@@ -1,8 +1,8 @@
 package swen225.murdermadness;
 import java.util.*;
 
+
 import swen225.murdermadness.cards.*;
-import swen225.murdermadness.cards.Character;
 import swen225.murdermadness.view.Position;
 
 /**
@@ -12,7 +12,10 @@ import swen225.murdermadness.view.Position;
 
 public class Player {
 	
-	final private Character playerCharacter;
+	final private String name;
+	private Position pos;
+	private Position prevPos;
+	
 	private List<Card> hand = new ArrayList<Card>();
 	private boolean inGame = true;
 
@@ -20,10 +23,10 @@ public class Player {
 	 * @return A String containing the descriptions of all the cards in the current players hand
 	 */
 	public String showHand(){
-		if(hand.isEmpty()) { return playerCharacter.getName()+"'s hand is empty!"; }
+		if(hand.isEmpty()) { return name+"'s hand is empty!"; }
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(playerCharacter.getName()+"'s hand"+"\n");
+		sb.append(name+"'s hand"+"\n");
 		for(Card c : hand) {
 			sb.append(c.getDescription()).append(", ");
 		}
@@ -38,8 +41,8 @@ public class Player {
 		return Collections.unmodifiableList(hand);
 	}
 	
-	public Character getCharacter() {
-		return this.playerCharacter;
+	public String getName() {
+		return this.name;
 	}
 	
 	public void addToHand(Card c) {
@@ -50,8 +53,8 @@ public class Player {
 		this.hand = cards;
 	}
 	
-	public Player(Character playerCharacter) {
-		this.playerCharacter = playerCharacter;
+	public Player(String name) {
+		this.name = name;
 	}
 	
 	/**
@@ -63,7 +66,7 @@ public class Player {
      * displaying the player on the board
      */
     public String display() {
-    	String s = this.playerCharacter.getName();
+    	String s = this.name;
         return "" + s.charAt(0);
     }
     
@@ -86,6 +89,10 @@ public class Player {
         this.stepsRemaining = steps;
     }
     
+    public void decrementStep() {
+    	this.stepsRemaining--;
+    }
+    
     /**
      * Get the amount of steps this player has remaining
      * @return the integer number of steps
@@ -94,19 +101,40 @@ public class Player {
         return stepsRemaining;
     }
     
+    
+    public void setPos(Position pos) {
+		this.pos = pos;
+	}
+	
+	public void setPrevPos(Position prev) {
+		this.prevPos = prev;
+	}
+	
+	public Position getPos() {
+		return this.pos;
+	}
+	
+	public Position getPrevPos() {
+		return this.prevPos;
+	}
+    
     /**
      * X and Y coordinates of the player
      */
-    public int x, y;
+    //public int x, y;
 	public boolean turnOver;
     
     /**
      * Updates the x and y coordinates of this player
      */
-    public void updateLocation(Position p) {
-    	this.x = p.getX();
-        this.y = p.getY();
+	
+    public void updateLocation(Position nextPos) {
+    	//this.x = p.getX();
+        //this.y = p.getY();
+    	this.prevPos = this.pos;
+    	this.pos = nextPos;
     }
+    
 	
 
 }

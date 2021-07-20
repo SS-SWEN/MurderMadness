@@ -27,7 +27,7 @@ public class NormalTile implements Tile{
 	}
 	
 	public String getPlayerName(Player p) {
-		return p.getCharacter().getName();
+		return p.getName();
 	}
 	
 	public void setPlayer(Player p) {
