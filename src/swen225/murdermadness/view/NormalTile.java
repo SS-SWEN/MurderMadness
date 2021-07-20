@@ -1,21 +1,39 @@
 package swen225.murdermadness.view;
 
+import swen225.murdermadness.Player;
+
 public class NormalTile implements Tile{
 	
 	/**
 	 * Stores the Position of the Tile in the board.
 	 */
 	private Position normalTilePosition;
+	public String character;
+	public Player player;
 	
 	/**
 	 * Construct the tile on board
 	 *
 	 * @param p Position of tile.
 	 */
-	public NormalTile(Position p) {
+	public NormalTile(Position p , String c) {
 		this.normalTilePosition = p;
+		this.character = c;
 	}
 	
+	public String getCharacter() {
+		return character;
+		
+	}
+	
+	public String getPlayerName(Player p) {
+		return p.getCharacter().getName();
+	}
+	
+	public void setPlayer(Player p) {
+		this.player = p;
+		
+	}
 	
 	/**
 	 * Gets the position of the tile.
@@ -40,5 +58,20 @@ public class NormalTile implements Tile{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public String getPlayer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Position getPos() {
+		// TODO Auto-generated method stub
+		return this.normalTilePosition;
+	}
+	
+	
+	
 
 }

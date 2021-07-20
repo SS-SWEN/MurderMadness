@@ -32,7 +32,7 @@ public class Estate {
 	public Estate(String estateName, ArrayList<Tile> estatePosition) {
 		this.estateName = estateName;
 		this.estatePosition = estatePosition;
-		calculateEnclosing(estatePosition);
+		//calculateEnclosing(estatePosition);
 	}
 	
 	/**

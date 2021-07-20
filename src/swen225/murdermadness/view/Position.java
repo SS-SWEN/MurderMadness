@@ -1,5 +1,7 @@
 package swen225.murdermadness.view;
 
+import swen225.murdermadness.Player;
+
 public class Position {
 	
 	private int x;
@@ -34,4 +36,21 @@ public class Position {
 	public String toString() {
 		return "("+this.x+","+this.y+")";
 	}
+	
+	//playert movement --------------------
+	/**
+     * Not null if a player moves onto, or is on this tile
+     */
+    private Player player = null;
+	
+	/**
+     * Set the current player on this tile, null if un-occupied
+     * @param player
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+		
+		
+	
 }

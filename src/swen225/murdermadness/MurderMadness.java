@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 
 import swen225.murdermadness.cards.Card;
@@ -30,7 +31,7 @@ public class MurderMadness {
 	private static int Players = 0; // this can be minimum 3 max of 6
 	
 	
-	private List<String> characterNames = new ArrayList<String>(Arrays.asList("Lucilla", "Bert",
+	private static List<String> characterNames = new ArrayList<String>(Arrays.asList("Lucilla", "Bert",
             "Melina", "Percy")); // this also indicates the order of turns
 	
 	private List<String> weaponNames = new ArrayList<String>(Arrays.asList("Broom", "Scissors",
@@ -39,7 +40,7 @@ public class MurderMadness {
 	private List<String> estateNames = new ArrayList<String>(Arrays.asList("Haunted House", "Manic manor", 
 			"Villa Celia", "Calamity Castle", "Peril Palace"));
 	
-	private Board game;
+	private static Board game;
 	private Set<Card> murderSolution;
 	private List<Player> players;
 	
@@ -48,17 +49,76 @@ public class MurderMadness {
     	//onAccusation(null);
     	
     	//Ask user preliminary stuff i.e. total players playing..etc
+    	
+    	game = new Board();
+		game.show();
+		
+		
+		
+		
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("How many players?");
     	try { 
     		setup(input.read());
+    		runGame();
     		input.close(); 
     		} 
     	catch (IOException e) { e.printStackTrace(); }
     }
     
+     //playerMovement-------------------------------------------------
+    private void runGame() {
+    	int numberOfPlayers = 4;
+    	while (numberOfPlayers > 1) {
+    		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
+    		Player p1 = players.get(0);
+    		p1.setStepsRemaining(roll);
+    		System.out.println(p1.getCharacter().getPos().getX() + " "+ p1.getCharacter().getPos().getY());
+    		doAction(p1);
+    		System.out.println(p1.getCharacter().getPos().getX() + " "+ p1.getCharacter().getPos().getY());
+    	}
+    }
+    public static final Scanner userInput = new Scanner(System.in);
+    private static void doAction(Player player) {
+    	while (player.hasRemainingSteps()) {
+    		String moveSummary = "invalid move!";
+    		player.turnOver = false;
+    		System.out.print("Direction: ");
+    		
+    		switch (userInput.next().toLowerCase()) {
+            case "w":
+                if (game.movePlayer(player, 1)) { //north
+                    moveSummary = "Player " + player.display() + " moved north";
+                }
+                break;
+            case "d":
+                if (game.movePlayer(player, 2)) { //east
+                    moveSummary = "Player " + player.display() + " moved east";
+                }
+                break;
+            case "s":
+                if (game.movePlayer(player, 3)) { //south
+                    moveSummary = "Player " + player.display() + " moved south";
+                }
+                break;
+            case "a":
+                if (game.movePlayer(player, 4)) { //west
+                    moveSummary = "Player " + player.display() + " moved west";
+                }
+                break;
+            default:
+                moveSummary = "Invalid input!";
+        }
+    	}
+    	
+    	
+    }
+    
     
     void setup(int totalPlayers) {
+    	
+    	game = new Board();
+		game.show();
     	
     	List<String> remainingChars = new ArrayList<String>();
     	remainingChars.addAll(characterNames);
@@ -121,11 +181,21 @@ public class MurderMadness {
 		// actually in the game)
 		for(Player p : players) {
 			characters.add(new CharacterCard(p.getCharacter()));
+			if (p.getCharacter().getName().equalsIgnoreCase("lucilla")) {
+				p.getCharacter().setPos(new Position(1,12));
+			} else if (p.getCharacter().getName().equalsIgnoreCase("percy")) {
+				p.getCharacter().setPos(new Position(15,22));
+			} else if (p.getCharacter().getName().equalsIgnoreCase("melina")) {
+				p.getCharacter().setPos(new Position(22,9));
+			} else if (p.getCharacter().getName().equalsIgnoreCase("bert")) {
+				p.getCharacter().setPos(new Position(8,1));
+			}
 		}
 		
 		List<EstateCard> estates = new  ArrayList<EstateCard>();
 		for(String es : estateNames) {
 			//TODO load data on the positions of the estates?
+			estates.add(new EstateCard(new Estate(es,null)));
 		}
 		
 		// Set up Murder Circumstances

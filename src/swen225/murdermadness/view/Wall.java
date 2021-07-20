@@ -6,14 +6,21 @@ public class Wall implements Tile{
 	 * Stores the Position of the Tile in the board.
 	 */
 	private Position wallPosition;
+	public String character;
 	
 	/**
 	 * Construct the tile on board
 	 *
 	 * @param p Position of tile
 	 */
-	public Wall(Position p) {
+	public Wall(Position p , String c) {
 		this.wallPosition = p;
+		this.character = c;
+	}
+	
+	public String getCharacter() {
+		return character;
+		
 	}
 	
 	
@@ -38,6 +45,18 @@ public class Wall implements Tile{
 	public boolean isObstruction() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public String getPlayer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Position getPos() {
+		// TODO Auto-generated method stub
+		return this.wallPosition;
 	}
 
 }

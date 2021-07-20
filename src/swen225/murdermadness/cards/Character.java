@@ -35,7 +35,7 @@ public class Character {
 		this.prevPos = prev;
 	}
 	
-	public Position getPos(Position pos) {
+	public Position getPos() {
 		return this.pos;
 	}
 	

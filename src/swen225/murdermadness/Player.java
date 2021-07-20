@@ -3,6 +3,7 @@ import java.util.*;
 
 import swen225.murdermadness.cards.*;
 import swen225.murdermadness.cards.Character;
+import swen225.murdermadness.view.Position;
 
 /**
  * Represent the Player of a particular round
@@ -13,6 +14,7 @@ public class Player {
 	
 	final private Character playerCharacter;
 	private List<Card> hand = new ArrayList<Card>();
+	private boolean inGame = true;
 
 	/**
 	 * @return A String containing the descriptions of all the cards in the current players hand
@@ -96,6 +98,7 @@ public class Player {
      * X and Y coordinates of the player
      */
     public int x, y;
+	public boolean turnOver;
     
     /**
      * Updates the x and y coordinates of this player
