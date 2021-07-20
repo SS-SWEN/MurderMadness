@@ -1,10 +1,11 @@
 package swen225.murdermadness.view;
 
+import swen225.murdermadness.MurderMadness.Direction;
 import swen225.murdermadness.Player;
 
 public class Board {
-	private Tile[][] board;
 	
+	private Tile[][] board;
 	String layout =
 	        ". . . . . . . . . . . . . . . . . . . . . . . ." + // 00
 			". . . . . . . . . . . . . . . . . . . . . . . ." + // 01
@@ -208,32 +209,41 @@ public class Board {
 	/**
      * Gets the adjacent tile of the new location to move the gamePiece to
      */
-    public Tile getNewLocation(Position current, int direction) {
+    public Tile getNewLocation(Position current, Direction direction) {
     	final int x = current.getX();
 		final int y = current.getY();
-		
+
 		switch (direction) {
-        case 1://north
-            return getTile(new Position(x, y-1));
-        case 2://east
-            return getTile(new Position(x+1, y));
-        case 3://south
-            return getTile(new Position(x, y+1));
-        case 4: //west
-            return getTile(new Position(x-1, y));
-        default:
-            return null;
+	        case UP:
+	            return getTile(new Position(x, y-1)); 
+	        case RIGHT:
+	            return getTile(new Position(x+1, y)); 
+	        case DOWN:
+	            return getTile(new Position(x, y+1)); 
+	        case LEFT:
+	            return getTile(new Position(x-1, y)); 
+	        default:
+	            return null;
 		}
     }
     
-    public boolean movePlayer(Player player, int direction, int steps) {
-		Tile next = getNewLocation(player.getPos(), direction);
-    	
-    	if(next == null) { return false; }
-    	if(next.isObstruction()) { return false; }
-    	if(next.getPos().equals(player.getPrevPos())) { return false;}
-    	
-    	player.updateLocation(next.getPos());
+    public boolean movePlayer(Player player, Direction direction, int steps) {
+    	for (int i = 0;i < steps;i++) {
+			Tile next = getNewLocation(player.getPos(), direction);
+	    	
+	    	if(next == null) { return false; }
+	    	if(next.isObstruction()) {
+	    		System.out.println("There is a wall there!");
+	    		return false; 
+	    	}
+	    	if(next.getPos().equals(player.getPrevPos())) {
+	    		System.out.println("You cannot go back a step during this turn!");
+	    		return false;
+	    	}
+	    	
+	    	player.updateLocation(next.getPos());
+	    	player.decrementStep();
+    	}
     	return true;
 	}
     

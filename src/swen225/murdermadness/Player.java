@@ -16,7 +16,8 @@ public class Player {
 	private Position pos;
 	private Position prevPos;
 	
-	private List<Card> hand = new ArrayList<Card>();
+	private List<Card> hand;
+	private Set<Card> eliminations;
 	private boolean inGame = true;
 
 	/**
@@ -41,6 +42,13 @@ public class Player {
 		return Collections.unmodifiableList(hand);
 	}
 	
+	/**
+	 * @return the elimination sheet of Cards that the Character holds
+	 */
+	public Set<Card> getEliminations() {
+		return Collections.unmodifiableSet(eliminations);
+	}
+	
 	public String getName() {
 		return this.name;
 	}
@@ -49,17 +57,27 @@ public class Player {
 		hand.add(c);
 	}
 	
+	public void addToEliminations(Card c) {
+		eliminations.add(c);
+	}
+	
 	public void setHand(List<Card> cards) {
 		this.hand = cards;
 	}
 	
 	public Player(String name) {
 		this.name = name;
+		hand = new ArrayList<Card>();
+		eliminations = new HashSet<Card>();
 	}
 	
 	/**
      * Player movement Below --------------------------------------------------------------
      */
+	
+	public String toString() {
+		return this.getName();
+	}
 	
 	/**
      * Shorthand representation of this player for

@@ -28,8 +28,6 @@ import swen225.murdermadness.view.*;
  */
 public class MurderMadness {
 	
-	private static int numPlayers = 0; // this can be minimum 3 max of 6
-	
 	private static List<String> characterNames = new ArrayList<String>(Arrays.asList("Lucilla", "Bert",
             "Melina", "Percy")); // this also indicates the order of turns
 	
@@ -39,15 +37,16 @@ public class MurderMadness {
 	private List<String> estateNames = new ArrayList<String>(Arrays.asList("Haunted House", "Manic manor", 
 			"Villa Celia", "Calamity Castle", "Peril Palace"));
 	
-	private static Board game;
+	public static enum Direction {UP, RIGHT, DOWN, LEFT}
+	private static int numPlayers = 0; // this can be minimum 3 max of 6
+	
+	private static Board board;
 	private Set<Card> murderSolution;
+	private Map<String, Card> allCards;
 	private List<Player> players;
 	
     public MurderMadness() {
-    	//Ask user preliminary stuff i.e. total players playing..etc
-    	game = new Board();
-		game.show();
-		
+    	// Ask user preliminary information
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("How many players?");
     	try { 
@@ -59,87 +58,86 @@ public class MurderMadness {
     			}
     		}
     		setup();
-    		runGame();
+    		initializeCards();
+    		runGame(numPlayers);
     		input.close(); 
-    		} 
+    	} 
     	catch (IOException e) { e.printStackTrace(); }
     }
     
      //playerMovement-------------------------------------------------
-    private void runGame() {
-    	int numberOfPlayers = numPlayers;
+    private void runGame(int numPlayers) {
+    	System.out.println("==============================================================");
+    	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
+    	System.out.println("==============================================================");
+    	board = new Board();
+    	board.show();
     	for(int i = 0; i < numPlayers; i++) {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
     		Player p = players.get(i);
     		p.setStepsRemaining(roll);
-    		System.out.println(p.getPos());
-    		doAction(p);
-    		System.out.println(p.getPos());
+    		System.out.println("DEBUG: Before Pos"+p.getPos());
+    		onPlayerMove(p);
+    		System.out.println("DEBUG: After Pos"+p.getPos());
     	}
     }
     
-    public static final Scanner userInput = new Scanner(System.in);
-    
-    private static void doAction(Player player) {
+    private static void onPlayerMove(Player player) {
+    	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	player.turnOver = false;
+    	System.out.println("==============================================================");
     	System.out.println(player.getName()+"'s Turn");
-    		
+    	System.out.println("==============================================================");
     	while (player.hasRemainingSteps()) {
-    		System.out.println("Steps reamining: "+player.getStepsRemaining());
-    		
-    		String moveSummary = "invalid move!";
-    		
-    		System.out.print("Direction: ");
-    		String dir = userInput.next().toLowerCase();
-    		
-			System.out.print("Number of Steps: ");
-    		int steps = Integer.parseInt(userInput.next());
-    		
-    		if(steps > player.getStepsRemaining()) { System.out.println("You don't have enough steps!");}
-    		
-    		else {
-    			boolean blocked = false;
-    			
-    			for(int i = 0; i <= steps; i++){
-    				switch (dir) {
-                    case "w":
-                        if (game.movePlayer(player, 1, steps)) { //north
-                            moveSummary = "Player " + player.display() + " moved north"; }
-                        else { blocked = true; }
-                    case "d":
-                        if (game.movePlayer(player, 2, steps)) { //east
-                            moveSummary = "Player " + player.display() + " moved east"; }
-                        else { blocked = true; }
-                    case "s":
-                        if (game.movePlayer(player, 3, steps)) { //south
-                            moveSummary = "Player " + player.display() + " moved south"; }
-                        else { blocked = true; }
-                    case "a":
-                        if (game.movePlayer(player, 4, steps)) { //west
-                            moveSummary = "Player " + player.display() + " moved west"; }
-                        else { blocked = true; }
-                    default:
-                        moveSummary = "Invalid input!";
-            		}
-    				
-    				// path wasn't blocked, decrement steps remaining
-    				if(!blocked) {
-    					steps--;
-                        player.decrementStep();
-    				}
-    				else { break; }
+    		try {
+	    		System.out.println("Steps remaining: "+player.getStepsRemaining());
+	    		
+	    		String moveSummary = "invalid move!";
+	    		
+	    		System.out.print("Direction: ");
+	    		String dir = input.readLine().toLowerCase();
+	
+	    		
+				System.out.print("Number of Steps: ");
+	    		int steps = Integer.parseInt(input.readLine());
+	    		
+	    		if(steps > player.getStepsRemaining()) { System.out.println("You don't have enough steps!");}
+	    		
+	    		else {
+	    			switch (dir) {
+	                    case "w":
+	                        if (board.movePlayer(player, Direction.UP, steps)) { 
+	                            moveSummary = "Player " + player + " moved UP: "+steps; }
+	                        break;
+	                    case "d":
+	                        if (board.movePlayer(player, Direction.RIGHT, steps)) { 
+	                            moveSummary = "Player " + player + " moved RIGHT: "+steps; }
+	                        break;
+	                    case "s":
+	                        if (board.movePlayer(player, Direction.DOWN, steps)) { 
+	                            moveSummary = "Player " + player + " moved DOWN: "+steps; }
+	                        break;
+	                    case "a":
+	                        if (board.movePlayer(player, Direction.LEFT, steps)) {
+	                            moveSummary = "Player " + player + " moved LEFT"+steps; }
+	                        break;
+	                    default:
+	                        moveSummary = "Invalid input!";
+	                        break;
+	            	}
     			}
+	    		board.show();
+	    		System.out.println("==============================================================");
+	    		System.out.println(moveSummary);
+	    		System.out.println("-------------------------------------------------------------");
+    		} catch(Exception e) {
+    			System.out.println("Invalid Input: "+e);
+    			continue;
     		}
     	}
-    	//space for next player
-    	System.out.println("----------------------------------");
     }
     
-    void setup() {
-    	
-    	game = new Board();
-		game.show();
-    	
+    private void setup() {
     	List<String> remainingChars = new ArrayList<String>();
     	remainingChars.addAll(characterNames);
 
@@ -167,20 +165,15 @@ public class MurderMadness {
 		    		if(found) { break; }
 		    		else {
 		    			System.out.println("Invalid character name, please choose a character from the list!");
+			    		System.out.println("-------------------------------------------------------------");
 		    		}
     			}
-	    		System.out.println("-------------------------------------------------------------");
-	    		
     		} catch(Exception e) {
     			System.out.println("Invalid Input: "+e.getMessage());
     			continue;
         	}
     		
     	}
-    	
-    	initializeCards();
-		game = new Board();
-		game.show();
     }
     
     /*
@@ -189,18 +182,22 @@ public class MurderMadness {
      */
     public void initializeCards() {
     	// Initialize & Store Respective Cards
+    	allCards = new HashMap<String, Card>();
     	murderSolution = new HashSet<Card>();
     	
 		List<WeaponCard> weapons = new ArrayList<WeaponCard>();
-		for(String w : weaponNames) {
-			weapons.add(new WeaponCard(w));
+		for(String w : weaponNames) { 
+			WeaponCard weapon = new WeaponCard(w);
+			weapons.add(weapon);
+			allCards.put(w, weapon);
 		}
 		
 		List<CharacterCard> characters = new  ArrayList<CharacterCard>();
-		// adds the relevant player characters that have been selected by the players (characters that are
+		// Adds the relevant player characters that have been selected by the players (characters that are
 		// actually in the game)
 		for(Player p : players) {
-			characters.add(new CharacterCard(p.getName()));
+			CharacterCard character = new CharacterCard(p.getName());
+			characters.add(character);
 			if (p.getName().equalsIgnoreCase("lucilla")) {
 				p.setPos(new Position(1,12));
 			} else if (p.getName().equalsIgnoreCase("percy")) {
@@ -210,12 +207,15 @@ public class MurderMadness {
 			} else if (p.getName().equalsIgnoreCase("bert")) {
 				p.setPos(new Position(8,1));
 			}
+			allCards.put(p.getName(),character);
 		}
 		
 		List<EstateCard> estates = new  ArrayList<EstateCard>();
 		for(String es : estateNames) {
-			//TODO load data on the positions of the estates?
-			estates.add(new EstateCard(new Estate(es,null)));
+			// TODO load data on the positions of the estates?
+			EstateCard estate = new EstateCard(new Estate(es, null));
+			estates.add(estate);
+			allCards.put(es, estate);
 		}
 		
 		// Set up Murder Circumstances
@@ -242,14 +242,13 @@ public class MurderMadness {
      * A player attempts to solve the murder scenario.
      */
     public void onAccusation(Player p) {
-    	boolean accusing = true;
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    	while (accusing) {
+    	while (true) {
     		try {
-    			System.out.println("-------------------------------------------------------------");
+    			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY ACCUSING");
 	    		System.out.println("Pick two cards that you think may be in the murder scenario");
-	    		System.out.println("-------------------------------------------------------------");
+	    		System.out.println("==============================================================");
 	    		
 	    		
     		} catch(Exception e) {
@@ -264,29 +263,77 @@ public class MurderMadness {
      * A player attempts to guess a card that may or may not exist in the murder scenario.
      */
     public void onRefute(Player p) {
-    	boolean accusing = true;
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    	while (accusing) {
+    	while (true) {
     		try {
-    			System.out.println("-------------------------------------------------------------");
+    			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY REFUTING");
 	    		System.out.println("You are inside the Peril Palace"); // TODO: Print Estate Player is in.
-	    		System.out.println("-------------------------------------------------------------");
+	    		System.out.println("==============================================================");
 	    		
-	    		System.out.print("Choose a Weapon: ");
-	    		String weapon = input.readLine(); // Could probably use a map to grab the card.
-	    		
-	    		System.out.print("Choose a Character: ");
-	    		String character = input.readLine();
-	    		
-	    		// if the grab is unsuccessful then the card should be null
-	    		if (character.equals(null)) {
-	    			
+	    		List<Card> weapons = new ArrayList<Card>();
+	    		List<Card> characters = new ArrayList<Card>();
+	    		for (Card c: allCards.values()) {
+	    			if (!p.getEliminations().contains(c)) {
+	    				if (c instanceof WeaponCard)
+	    					weapons.add(c);
+	    				if (c instanceof CharacterCard)
+	    					characters.add(c);
+	    			}
 	    		}
 	    		
+	    		Display.displayPossibleCards(weapons);
+	    		System.out.print("Guess a WeaponCard: ");
+	    		Card weapon = allCards.get(Display.capitalize(input.readLine())); 
 	    		
+	    		if (weapon == null) throw new NoSuchElementException("Card does not exist");
+	    		System.out.println("-------------------------------------------------------------");
 	    		
+	    		Display.displayPossibleCards(characters);
+	    		System.out.print("Guess a CharacterCard: ");
+	    		Card character = allCards.get(Display.capitalize(input.readLine()));
+	    		
+	    		if (character == null) throw new NoSuchElementException("Card does not exist");
+	    		System.out.println("-------------------------------------------------------------");
+	    		System.out.println("YOUR GUESSES: "+weapon+" & "+character);
+	    		System.out.println("-------------------------------------------------------------");
+	    		
+	    		// Move Cards into Current Estate
+	    		
+	    		// TODO: WeaponCard should probably have a move method too
+	    		// weapon.move() into this estate
+	    		
+	    		// TODO: CharacterCard should store a reference to player
+	    		// So character.getPlayer().move() into this estate
+
+	    		// Check if a player can refute the guess
+	    		Card refutedCard = null;
+	    		for (Player otherPlayer: players) {
+	    			if (!p.equals(otherPlayer) && (otherPlayer.getHand().contains(weapon) || otherPlayer.getHand().contains(character))) {
+	    				System.out.println(otherPlayer+" has refuted one of your guesses");
+	    				System.out.println("DEBUG: "+otherPlayer+"'s Hand| "+otherPlayer.getHand());
+	    				if (otherPlayer.getHand().contains(weapon)) {
+	    					refutedCard = weapon;
+	    					break;
+	    				} else if (otherPlayer.getHand().contains(character)) {
+	    					refutedCard = character;
+	    					break;
+	    				}
+	    				
+	    			}
+	    		}
+	    		
+	    		if (refutedCard != null) {
+					System.out.println(refutedCard+" is no longer possible for this murder scenario");
+					p.addToEliminations(refutedCard);
+	    		} else {
+	    			System.out.println("No one could refute your guesses");
+	    			System.out.println(weapon+" & "+character);
+	    		}
+	    		System.out.println("-------------------------------------------------------------");
+	    		break;
     		} catch(Exception e) {
+    			System.out.println("-------------------------------------------------------------");
     			System.out.println("Invalid Input: "+e.getMessage());
     			continue;
     		}
