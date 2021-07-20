@@ -57,7 +57,7 @@ public class Board {
 			}
 		}
 		//playerStartingPositions
-		this.board[1][11] = new Wall(new Position(1,12),"1"); // lucilla
+		this.board[1][12] = new Wall(new Position(1,12),"1"); // lucilla
 		this.board[15][22] = new Wall(new Position(15,22),"2"); // Percy
 		this.board[22][9] = new Wall(new Position(22,9),"3"); // Malina
 		this.board[8][1] = new Wall(new Position(8,1),"4"); // Bert
