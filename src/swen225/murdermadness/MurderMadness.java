@@ -126,7 +126,6 @@ public class MurderMadness {
 	                        break;
 	            	}
     			}
-	    		board.show();
 	    		System.out.println("==============================================================");
 	    		System.out.println(moveSummary);
 	    		System.out.println("-------------------------------------------------------------");
@@ -199,13 +198,13 @@ public class MurderMadness {
 			CharacterCard character = new CharacterCard(p.getName());
 			characters.add(character);
 			if (p.getName().equalsIgnoreCase("lucilla")) {
-				p.setPos(new Position(1,12));
+				p.setPos(new Position(11,1));
 			} else if (p.getName().equalsIgnoreCase("percy")) {
-				p.setPos(new Position(15,22));
+				p.setPos(new Position(22,14));
 			} else if (p.getName().equalsIgnoreCase("melina")) {
-				p.setPos(new Position(22,9));
+				p.setPos(new Position(9,22));
 			} else if (p.getName().equalsIgnoreCase("bert")) {
-				p.setPos(new Position(8,1));
+				p.setPos(new Position(1,9));
 			}
 			allCards.put(p.getName(),character);
 		}

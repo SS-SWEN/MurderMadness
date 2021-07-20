@@ -59,4 +59,10 @@ public class Wall implements Tile{
 		return this.wallPosition;
 	}
 
+	@Override
+	public void setCharacter(String character) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

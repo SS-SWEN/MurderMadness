@@ -15,5 +15,7 @@ public interface Tile {
 	String getCharacter();
 	
 	String getPlayer();
+
+	public void setCharacter(String character);
 	
 }

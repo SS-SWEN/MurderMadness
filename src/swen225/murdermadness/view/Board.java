@@ -35,7 +35,7 @@ public class Board {
 	public void show() {
 		for (int y = 0; y <= 23; y++) {
 			for (int x = 0; x <= 23; x++) {
-				System.out.print(this.board[y][x].getCharacter());
+				System.out.print(this.board[x][y].getCharacter());
 			}
 			System.out.println ();
 		}
@@ -57,10 +57,10 @@ public class Board {
 			}
 		}
 		//playerStartingPositions
-		this.board[1][12] = new Wall(new Position(1,12),"1"); // lucilla
-		this.board[15][22] = new Wall(new Position(15,22),"2"); // Percy
-		this.board[22][9] = new Wall(new Position(22,9),"3"); // Malina
-		this.board[8][1] = new Wall(new Position(8,1),"4"); // Bert
+		this.board[11][1] = new NormalTile(new Position(11,1),"1"); // lucilla
+		this.board[22][14] = new NormalTile(new Position(22,14),"2"); // Percy
+		this.board[9][22] = new NormalTile(new Position(9,22),"3"); // Malina
+		this.board[1][9] = new NormalTile(new Position(1,9),"4"); // Bert
 		
 		// Haunted House walls
 
@@ -230,20 +230,23 @@ public class Board {
     public boolean movePlayer(Player player, Direction direction, int steps) {
     	for (int i = 0;i < steps;i++) {
 			Tile next = getNewLocation(player.getPos(), direction);
-	    	
+	    	//System.out.println(next.getPos().getX() + " AND " + next.getPos().getY());
 	    	if(next == null) { return false; }
 	    	if(next.isObstruction()) {
 	    		System.out.println("There is a wall there!");
 	    		return false; 
 	    	}
+	    	
 	    	if(next.getPos().equals(player.getPrevPos())) {
 	    		System.out.println("You cannot go back a step during this turn!");
 	    		return false;
 	    	}
-	    	
+	        this.board[next.getPos().getX()][next.getPos().getY()].setCharacter(board[player.getPos().getX()][player.getPos().getY()].getCharacter());
+	        this.board[player.getPos().getX()][player.getPos().getY()].setCharacter(".");
 	    	player.updateLocation(next.getPos());
 	    	player.decrementStep();
     	}
+    	this.show();
     	return true;
 	}
     

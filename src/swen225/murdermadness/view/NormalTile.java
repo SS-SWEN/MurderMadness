@@ -26,6 +26,15 @@ public class NormalTile implements Tile{
 		
 	}
 	
+	/**
+	 * Sets the character of the tile.
+	 *
+	 *@param c Character of the tile in the board.
+	 */
+	public void setCharacter(String c) {
+		this.character = c;
+	}
+	
 	public String getPlayerName(Player p) {
 		return p.getName();
 	}
