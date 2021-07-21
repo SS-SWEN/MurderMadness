@@ -18,7 +18,7 @@ public class Player {
 	
 	private List<Card> hand;
 	private Set<Card> eliminations;
-	private boolean inGame = true;
+	public boolean inGame;
 
 	/**
 	 * @return A String containing the descriptions of all the cards in the current players hand
@@ -63,6 +63,10 @@ public class Player {
 		return this.name;
 	}
 	
+	public void setInGame(boolean status) {
+		this.inGame = status;
+	}
+	
 	public void addToHand(Card c) {
 		hand.add(c);
 	}
@@ -79,6 +83,7 @@ public class Player {
 		this.name = name;
 		hand = new ArrayList<Card>();
 		eliminations = new HashSet<Card>();
+		inGame = true;
 	}
 	
 	/**

@@ -38,6 +38,7 @@ public class MurderMadness {
 	private List<String> estateNames = new ArrayList<String>(Arrays.asList("Haunted House", "Manic manor", 
 			"Villa Celia", "Calamity Castle", "Peril Palace"));
 	
+	private boolean isOngoing;
 	public static enum Direction {UP, RIGHT, DOWN, LEFT}
 	private static int numPlayers = 0; // this can be minimum 3 max of 6
 	
@@ -47,6 +48,7 @@ public class MurderMadness {
 	private List<Player> players;
 	
     public MurderMadness() {
+    	isOngoing = true;
     	// Ask user preliminary information
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("How many players?");
@@ -76,14 +78,26 @@ public class MurderMadness {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
     		Player p = players.get(i);
     		p.setStepsRemaining(roll);
+    		System.out.println("SCENARIO: "+murderSolution);
+    		
     		//System.out.println("DEBUG: Before Pos"+p.getPos());
-    		
-    		onPlayerMove(p);
-    		// TODO: Detect when player is inside an Estate
-    		// If set/store the estate inside the player
-    		// and ask them if they want to refute/make a guess
-    		
+    		if (p.inGame) {
+	    		onPlayerMove(p);
+	    		// TODO: Detect when player is inside an Estate
+	    		// If so, set/store the estate inside the player
+	    		// and ask them if they want to refute/make a guess
+	    		
+	    		
+    		}
     		//System.out.println("DEBUG: After Pos"+p.getPos());
+    		
+    		if (isOngoing) continue;
+    		else {
+    			System.out.println("==============================================================");
+    			System.out.println(p+" has won the game!! | SCENARIO: "+murderSolution);
+    			System.out.println("==============================================================");
+    			break;
+    		}
     	}
     }
     
@@ -250,12 +264,54 @@ public class MurderMadness {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while (true) {
     		try {
+    			Estate estate = null; // TODO: Grab Estate Player is in. player.getEstate();
+    			EstateCard estateCard = (EstateCard)allCards.get("Peril Palace");
+    			
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY ACCUSING");
 	    		System.out.println("Pick two cards that you think may be in the murder scenario");
 	    		System.out.println("==============================================================");
 	    		
+	    		List<Card> weapons = new ArrayList<Card>();
+	    		List<Card> characters = new ArrayList<Card>();
+	    		for (Card c: allCards.values()) {
+	    			if (!p.getEliminations().contains(c)) {
+	    				if (c instanceof WeaponCard)
+	    					weapons.add(c);
+	    				if (c instanceof CharacterCard)
+	    					characters.add(c);
+	    			}
+	    		}
 	    		
+	    		Display.displayPossibleCards(weapons);
+	    		System.out.print("Choose a WeaponCard: ");
+	    		Card weaponCard = allCards.get(Display.capitalize(input.readLine())); 
+	    		
+	    		if (weaponCard == null) throw new NoSuchElementException("Card does not exist");
+	    		System.out.println("-------------------------------------------------------------");
+	    		
+	    		Display.displayPossibleCards(characters);
+	    		System.out.print("Choose a CharacterCard: ");
+	    		Card characterCard = allCards.get(Display.capitalize(input.readLine()));
+	    		
+	    		if (characterCard == null) throw new NoSuchElementException("Card does not exist");
+	    		System.out.println("-------------------------------------------------------------");
+	    		System.out.println("YOUR ACCUSATION: "+weaponCard+" & "+characterCard+" inside the Peril Palace"); // TODO: Print Estate
+	    		System.out.println("-------------------------------------------------------------");
+	    		System.out.print("Enter any key to proceed..");
+	    		input.readLine();
+	    		
+	    		String msg = "You have failed to choose the right murder scenario, you are now out of this game";
+	    		Set<Card> proposedSolution = new HashSet<Card>(Set.of(weaponCard, characterCard, estateCard));
+	    		if (murderSolution.containsAll(proposedSolution)) {
+	    			msg = "Congratulations you were correct!";
+	    			isOngoing = false;
+	    		} else p.setInGame(false);
+	    		
+	    		System.out.println("==============================================================");
+	    		System.out.println(msg);
+	    		System.out.println("==============================================================");
+	    		break;
     		} catch(Exception e) {
     			System.out.println("Invalid Input: "+e.getMessage());
     			continue;
