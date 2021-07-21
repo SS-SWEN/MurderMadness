@@ -18,5 +18,9 @@ public class WeaponCard implements Card{
 		return "Weapon: "+this.weaponName;
 	}
 	
+	@Override
+	public String toString() {
+		return "\""+this.weaponName+"\"";
+	}
 	
 }

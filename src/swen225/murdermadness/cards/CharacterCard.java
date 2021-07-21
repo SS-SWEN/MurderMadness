@@ -1,5 +1,7 @@
 package swen225.murdermadness.cards;
 
+import swen225.murdermadness.Player;
+
 /**
  * Represents a Card for corresponding to a character
  * @author grantrona
@@ -7,18 +9,29 @@ package swen225.murdermadness.cards;
  */
 public class CharacterCard implements Card{
 	
-	final private String character;
+	private final String character;
+	private final Player player;
 	
-	public CharacterCard(String character) {
+	public CharacterCard(String character, Player player) {
 		this.character = character;
+		this.player = player;
 	}
 	
 	public String getCharacter() {
 		return this.character;
 	}
 
+	public Player getPlayer() {
+		return this.player;
+	}
+	
 	@Override
 	public String getDescription() {
 		return "Character: "+ this.character;
+	}
+	
+	@Override
+	public String toString() {
+		return "\""+this.character+"\"";
 	}
 }

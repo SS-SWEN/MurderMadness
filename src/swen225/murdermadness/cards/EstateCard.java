@@ -7,15 +7,24 @@ import swen225.murdermadness.*;
 
 public class EstateCard implements Card  {
 	
-final private Estate estate;
+	private final Estate estate;
 	
 	public EstateCard(Estate estate) {
 		this.estate = estate;
 	}
 
+	public Estate getEstate() {
+		return this.estate;
+	}
+	
 	@Override
 	public String getDescription() {
 		return "Estate: "+this.estate.getName();
+	}
+	
+	@Override
+	public String toString() {
+		return "\""+this.estate.getName()+"\"";
 	}
 
 }

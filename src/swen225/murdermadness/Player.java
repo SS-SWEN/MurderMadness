@@ -49,6 +49,16 @@ public class Player {
 		return Collections.unmodifiableSet(eliminations);
 	}
 	
+	public List<Card> countRefutableCards(Card weapon, Card character, Card estate) {
+		List<Card> collate = new ArrayList<Card>();
+		for (Card c: this.hand) {
+			if (c.equals(weapon) || c.equals(character) || c.equals(estate)) {
+				collate.add(c);
+			}
+		}
+		return collate;
+	}
+	
 	public String getName() {
 		return this.name;
 	}

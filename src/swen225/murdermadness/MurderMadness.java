@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import swen225.murdermadness.cards.Card;
 import swen225.murdermadness.cards.CharacterCard;
@@ -65,7 +66,6 @@ public class MurderMadness {
     	catch (IOException e) { e.printStackTrace(); }
     }
     
-     //playerMovement-------------------------------------------------
     private void runGame(int numPlayers) {
     	System.out.println("==============================================================");
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
@@ -76,9 +76,14 @@ public class MurderMadness {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
     		Player p = players.get(i);
     		p.setStepsRemaining(roll);
-    		System.out.println("DEBUG: Before Pos"+p.getPos());
+    		//System.out.println("DEBUG: Before Pos"+p.getPos());
+    		
     		onPlayerMove(p);
-    		System.out.println("DEBUG: After Pos"+p.getPos());
+    		// TODO: Detect when player is inside an Estate
+    		// If set/store the estate inside the player
+    		// and ask them if they want to refute/make a guess
+    		
+    		//System.out.println("DEBUG: After Pos"+p.getPos());
     	}
     }
     
@@ -100,7 +105,7 @@ public class MurderMadness {
 	    		
 				System.out.print("Number of Steps: ");
 	    		int steps = Integer.parseInt(input.readLine());
-	    		
+	    		System.out.println("-------------------------------------------------------------");
 	    		if(steps > player.getStepsRemaining()) { System.out.println("You don't have enough steps!");}
 	    		
 	    		else {
@@ -126,6 +131,7 @@ public class MurderMadness {
 	                        break;
 	            	}
     			}
+	    		board.show();
 	    		System.out.println("==============================================================");
 	    		System.out.println(moveSummary);
 	    		System.out.println("-------------------------------------------------------------");
@@ -195,7 +201,7 @@ public class MurderMadness {
 		// Adds the relevant player characters that have been selected by the players (characters that are
 		// actually in the game)
 		for(Player p : players) {
-			CharacterCard character = new CharacterCard(p.getName());
+			CharacterCard character = new CharacterCard(p.getName(), p);
 			characters.add(character);
 			if (p.getName().equalsIgnoreCase("lucilla")) {
 				p.setPos(new Position(11,1));
@@ -257,7 +263,6 @@ public class MurderMadness {
     	}
     }
     
-    
     /*
      * A player attempts to guess a card that may or may not exist in the murder scenario.
      */
@@ -265,9 +270,12 @@ public class MurderMadness {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while (true) {
     		try {
+    			Estate estate = null; // TODO: Grab Estate Player is in. player.getEstate();
+    			EstateCard estateCard = (EstateCard)allCards.get("Peril Palace");
+    			
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY REFUTING");
-	    		System.out.println("You are inside the Peril Palace"); // TODO: Print Estate Player is in.
+	    		System.out.println("You are inside the Peril Palace"); // TODO: Print Estate
 	    		System.out.println("==============================================================");
 	    		
 	    		List<Card> weapons = new ArrayList<Card>();
@@ -283,18 +291,18 @@ public class MurderMadness {
 	    		
 	    		Display.displayPossibleCards(weapons);
 	    		System.out.print("Guess a WeaponCard: ");
-	    		Card weapon = allCards.get(Display.capitalize(input.readLine())); 
+	    		Card weaponCard = allCards.get(Display.capitalize(input.readLine())); 
 	    		
-	    		if (weapon == null) throw new NoSuchElementException("Card does not exist");
+	    		if (weaponCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
 	    		
 	    		Display.displayPossibleCards(characters);
 	    		System.out.print("Guess a CharacterCard: ");
-	    		Card character = allCards.get(Display.capitalize(input.readLine()));
+	    		Card characterCard = allCards.get(Display.capitalize(input.readLine()));
 	    		
-	    		if (character == null) throw new NoSuchElementException("Card does not exist");
+	    		if (characterCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
-	    		System.out.println("YOUR GUESSES: "+weapon+" & "+character);
+	    		System.out.println("YOUR GUESSES: "+weaponCard+" & "+characterCard+" inside the Peril Palace"); // TODO: Print Estate
 	    		System.out.println("-------------------------------------------------------------");
 	    		
 	    		// Move Cards into Current Estate
@@ -307,19 +315,40 @@ public class MurderMadness {
 
 	    		// Check if a player can refute the guess
 	    		Card refutedCard = null;
-	    		for (Player otherPlayer: players) {
-	    			if (!p.equals(otherPlayer) && (otherPlayer.getHand().contains(weapon) || otherPlayer.getHand().contains(character))) {
-	    				System.out.println(otherPlayer+" has refuted one of your guesses");
-	    				System.out.println("DEBUG: "+otherPlayer+"'s Hand| "+otherPlayer.getHand());
-	    				if (otherPlayer.getHand().contains(weapon)) {
-	    					refutedCard = weapon;
-	    					break;
-	    				} else if (otherPlayer.getHand().contains(character)) {
-	    					refutedCard = character;
-	    					break;
-	    				}
-	    				
-	    			}
+	    		List<String> order = characterNames.stream()
+	    				.filter(character -> !character.equalsIgnoreCase(p.getName()))
+	    				.collect(Collectors.toList()); // Filter current player & Ensures an order for guessing
+
+	    		for (String pName: order) {
+	    			CharacterCard pChar = (CharacterCard)allCards.get(pName);
+	    			Player otherPlayer = pChar.getPlayer();
+	    			List<Card> options = otherPlayer.countRefutableCards(weaponCard, characterCard, estateCard);
+	    			
+		    		if (options.size() > 1) {
+		    			System.out.println(otherPlayer+" can refute one of your guesses");
+			    		System.out.println("Please pass the tablet to "+otherPlayer+" before proceeding");
+			    		System.out.print("Enter any key to proceed..");
+			    		input.readLine();
+				    	while(true) {
+				    		try {
+					    		System.out.println("-------------------------------------------------------------");
+					    		System.out.println(otherPlayer+"'s turn");
+					    		System.out.println("-------------------------------------------------------------");
+					    		System.out.println(p+"'s GUESSES: "+weaponCard+" & "+characterCard+" inside the Peril Palace"+""); // TODO: estate.getName()
+					    		System.out.println("-------------------------------------------------------------");
+					    		System.out.println("Your Hand | "+options);
+					    		System.out.println("Enter a number from 1-"+options.size()+" to pick the card");
+					    		System.out.print("Choose ONE card to refute a guess: ");
+					    		int chosenCard = Integer.parseInt(input.readLine());
+					    		refutedCard = options.get(chosenCard);
+					    		break;
+				    		} catch(Exception e) {e.printStackTrace();continue;}
+				    	}
+		    		} else if (!options.isEmpty()) {
+		    			System.out.println(otherPlayer+" has refuted one of your guesses");
+		    			refutedCard = options.get(0);
+		    		}
+		    		break;
 	    		}
 	    		
 	    		if (refutedCard != null) {
@@ -327,7 +356,7 @@ public class MurderMadness {
 					p.addToEliminations(refutedCard);
 	    		} else {
 	    			System.out.println("No one could refute your guesses");
-	    			System.out.println(weapon+" & "+character);
+	    			System.out.println("Potential MurderScenario could be: "+weaponCard+" & "+characterCard+" inside Peril Palace"+""); // TODO: estate.getName()
 	    		}
 	    		System.out.println("-------------------------------------------------------------");
 	    		break;

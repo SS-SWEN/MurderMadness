@@ -57,10 +57,10 @@ public class Board {
 			}
 		}
 		//playerStartingPositions
-		this.board[11][1] = new NormalTile(new Position(11,1),"1"); // lucilla
-		this.board[22][14] = new NormalTile(new Position(22,14),"2"); // Percy
-		this.board[9][22] = new NormalTile(new Position(9,22),"3"); // Malina
-		this.board[1][9] = new NormalTile(new Position(1,9),"4"); // Bert
+		this.board[11][1] = new NormalTile(new Position(11,1),"L"); // lucilla
+		this.board[22][14] = new NormalTile(new Position(22,14),"P"); // Percy
+		this.board[9][22] = new NormalTile(new Position(9,22),"M"); // Malina
+		this.board[1][9] = new NormalTile(new Position(1,9),"B"); // Bert
 		
 		// Haunted House walls
 
