@@ -7,7 +7,6 @@ import swen225.murdermadness.view.Tile;
 import swen225.murdermadness.view.Wall;
 
 public class Estate {
-	final List<Tile> estatePosition;
 	private final String estateName;
 	
 	// maximum x,y value, represents the top left of the estate 
@@ -19,20 +18,20 @@ public class Estate {
 	 * Check if a Position in within the Estate (within its walls)
 	 */
 	public boolean within(Position pos) {
-		return pos.getX() > topLeft.getX() 
-				&& pos.getX() < botRight.getX()
-				&& pos.getY() > topLeft.getY() 
-				&& pos.getY() < botRight.getY();
+		return pos.getX() >= topLeft.getX() 
+				&& pos.getX() <= botRight.getX()
+				&& pos.getY() >= topLeft.getY() 
+				&& pos.getY() <= botRight.getY();
 	}
 	
 	public String getName() {
 		return this.estateName;
 	}
 	
-	public Estate(String estateName, ArrayList<Tile> estatePosition) {
+	public Estate(String estateName, Position topLeft, Position botRight) {
 		this.estateName = estateName;
-		this.estatePosition = estatePosition;
-		//calculateEnclosing(estatePosition);
+		this.topLeft = topLeft;
+		this.botRight = botRight;
 	}
 	
 	/**

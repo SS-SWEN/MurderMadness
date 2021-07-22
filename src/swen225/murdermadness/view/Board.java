@@ -199,6 +199,7 @@ public class Board {
 				this.board[20][21] = new Wall(new Position(20,21),"P");
 				this.board[21][21] = new Wall(new Position(21,21),"P");
 				
+				
 				hauntedHouse.add(this.board[2][2]);// top left
 				hauntedHouse.add(this.board[6][6]);// bottom Right
 				

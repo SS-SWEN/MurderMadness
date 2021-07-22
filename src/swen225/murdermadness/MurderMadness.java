@@ -35,7 +35,7 @@ public class MurderMadness {
 	private List<String> weaponNames = new ArrayList<String>(Arrays.asList("Broom", "Scissors",
             "Knife", "Shovel", "Ipad"));
 	
-	private List<String> estateNames = new ArrayList<String>(Arrays.asList("Haunted House", "Manic manor", 
+	private List<String> estateNames = new ArrayList<String>(Arrays.asList("Haunted House", "Manic Manor", 
 			"Villa Celia", "Calamity Castle", "Peril Palace"));
 	
 	private boolean isOngoing;
@@ -79,17 +79,12 @@ public class MurderMadness {
     	for(int i = 0; i < numPlayers; i++) {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
     		Player p = players.get(i);
-    		p.setStepsRemaining(roll);
+    		p.setStepsRemaining(100);
     		System.out.println("SCENARIO: "+murderSolution);
     		
     		//System.out.println("DEBUG: Before Pos"+p.getPos());
     		if (p.inGame) {
-	    		onPlayerMove(p);	    		
-	    		// TODO: Detect when player is inside an Estate
-	    		// If so, set/store the estate inside the player
-	    		// and ask them if they want to refute/make a guess
-	    		
-	    		
+	    		onPlayerMove(p);	    		  		
     		}
     		//System.out.println("DEBUG: After Pos"+p.getPos());
     		
@@ -110,19 +105,7 @@ public class MurderMadness {
     	System.out.println(player.getName()+"'s Turn");
     	System.out.println("==============================================================");
     	while (player.hasRemainingSteps()) {
-    		try {
-                Position ch = new Position(player.getPos().getX(),player.getPos().getY());
-	    		
-	    		for (Card card : allCards.values()) {
-	                if(card.getClass().isInstance(EstateCard.class)) {
-	                	if(((EstateCard) card).getEstate().within(player.getPos())) {
-	                		player.estate = ((EstateCard) card).getEstate();
-	                		System.out.println("player is in an estate");
-	                		System.out.println(player.estate.getName());
-	                	}
-	                }    
-	    		}
-	    		System.out.println("player not in estate");
+    		try {	    		
 	    		System.out.println("Steps remaining: "+player.getStepsRemaining());
 	    		
 	    		String moveSummary = "invalid move!";
@@ -162,6 +145,17 @@ public class MurderMadness {
 	    		System.out.println("==============================================================");
 	    		System.out.println(moveSummary);
 	    		System.out.println("-------------------------------------------------------------");
+	    		
+	    		for (Card card : allCards.values()) {
+	                if(card instanceof EstateCard) {
+	                	EstateCard es = (EstateCard)card;
+	                	if(es.getEstate().within(player.getPos())) {
+	                		player.estate = es.getEstate();
+	                		System.out.println("Player is in an estate");
+	                		System.out.println(player.estate.getName());
+	                	}
+	                }    
+	    		}
     		} catch(Exception e) {
     			System.out.println("Invalid Input: "+e);
     			continue;
@@ -244,10 +238,29 @@ public class MurderMadness {
 		
 		List<EstateCard> estates = new  ArrayList<EstateCard>();
 		for(String es : estateNames) {
-			// TODO load data on the positions of the estates?
-			EstateCard estate = new EstateCard(new Estate(es, null));
-			estates.add(estate);
-			allCards.put(es, estate);
+			Position topLeft = null;
+			Position botRight = null;
+			if (es.equals("Haunted House")) {
+				topLeft = new Position(2,2);
+				botRight = new Position(6,6);
+			} else if (es.equals("Manic Manor")) {
+				topLeft = new Position(17,2);
+				botRight = new Position(21,6);
+			} else if (es.equals("Villa Celia")) {
+				topLeft = new Position(9,10);
+				botRight = new Position(14,13);
+			} else if (es.equals("Calamity Castle")) {
+				topLeft = new Position(2,17);
+				botRight = new Position(6,21);
+			} else if (es.equals("Peril Palace")) {
+				topLeft = new Position(17,17);
+				botRight = new Position(21,21);
+			}
+				
+			Estate estate = new Estate(es, topLeft, botRight);
+			EstateCard estateCard = new EstateCard(estate);
+			estates.add(estateCard);
+			allCards.put(es, estateCard);
 		}
 		
 		// Set up Murder Circumstances
