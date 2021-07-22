@@ -79,14 +79,11 @@ public class MurderMadness {
     	for(int i = 0; i < numPlayers; i++) {
     		int roll = (int) (((Math.random() * 6) + 1) + ((Math.random() * 6) + 1));
     		Player p = players.get(i);
-    		p.setStepsRemaining(100);
     		System.out.println("SCENARIO: "+murderSolution);
-    		
-    		//System.out.println("DEBUG: Before Pos"+p.getPos());
+    		p.setStepsRemaining(roll);
     		if (p.inGame) {
 	    		onPlayerMove(p);	    		  		
     		}
-    		//System.out.println("DEBUG: After Pos"+p.getPos());
     		
     		if (isOngoing) continue;
     		else {
@@ -263,9 +260,20 @@ public class MurderMadness {
 			allCards.put(es, estateCard);
 		}
 		
-		// Set up Murder Circumstances
 		Random ran = new Random();
 		Collections.shuffle(weapons);Collections.shuffle(characters);Collections.shuffle(estates);
+		
+		//Distribute the evenly weapons to the estates
+		int i = 0;
+		while(i != weapons.size()) {
+			for(EstateCard e : estates) {
+				if(i == weapons.size()) { break; }
+				e.getEstate().addWeapon(weapons.get(i));
+				i++;
+			}
+		}
+				
+		// Set up Murder Circumstances
 		murderSolution.add(weapons.remove(ran.nextInt(weapons.size())));
 		murderSolution.add(characters.remove(ran.nextInt(characters.size())));
 		murderSolution.add(estates.remove(ran.nextInt(estates.size())));
@@ -290,8 +298,7 @@ public class MurderMadness {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while (true) {
     		try {
-    			Estate estate = null; // TODO: Grab Estate Player is in. player.getEstate();
-    			EstateCard estateCard = (EstateCard)allCards.get("Peril Palace");
+    			EstateCard estateCard = (EstateCard)allCards.get(p.getEstate().getName());
     			
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY ACCUSING");
@@ -329,10 +336,13 @@ public class MurderMadness {
 	    		
 	    		String msg = "You have failed to choose the right murder scenario, you are now out of this game";
 	    		Set<Card> proposedSolution = new HashSet<Card>(Set.of(weaponCard, characterCard, estateCard));
+	    		//correct murder solution, player wins
 	    		if (murderSolution.containsAll(proposedSolution)) {
 	    			msg = "Congratulations you were correct!";
 	    			isOngoing = false;
-	    		} else p.setInGame(false);
+	    		}
+	    		//player has made a wrong accusation and now cannot make another
+	    		else p.setInGame(false);
 	    		
 	    		System.out.println("==============================================================");
 	    		System.out.println(msg);
@@ -352,12 +362,12 @@ public class MurderMadness {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while (true) {
     		try {
-    			Estate estate = null; // TODO: Grab Estate Player is in. player.getEstate();
-    			EstateCard estateCard = (EstateCard)allCards.get("Peril Palace");
+    			Estate currentEstate = p.getEstate(); // TODO: Grab Estate Player is in. player.getEstate();
+    			EstateCard estateCard = (EstateCard)allCards.get(currentEstate.getName());
     			
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY REFUTING");
-	    		System.out.println("You are inside the Peril Palace"); // TODO: Print Estate
+	    		System.out.println("You are inside"+currentEstate.getName());
 	    		System.out.println("==============================================================");
 	    		
 	    		List<Card> weapons = new ArrayList<Card>();
@@ -373,14 +383,14 @@ public class MurderMadness {
 	    		
 	    		Display.displayPossibleCards(weapons);
 	    		System.out.print("Guess a WeaponCard: ");
-	    		Card weaponCard = allCards.get(Display.capitalize(input.readLine())); 
+	    		WeaponCard weaponCard = (WeaponCard)allCards.get(Display.capitalize(input.readLine())); 
 	    		
 	    		if (weaponCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
 	    		
 	    		Display.displayPossibleCards(characters);
 	    		System.out.print("Guess a CharacterCard: ");
-	    		Card characterCard = allCards.get(Display.capitalize(input.readLine()));
+	    		CharacterCard characterCard = (CharacterCard)allCards.get(Display.capitalize(input.readLine()));
 	    		
 	    		if (characterCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
@@ -388,12 +398,29 @@ public class MurderMadness {
 	    		System.out.println("-------------------------------------------------------------");
 	    		
 	    		// Move Cards into Current Estate
+	  
+	    		// remove weapon from one estate, and move it to this estate
+	    		if (!currentEstate.hasThisWeapon(weaponCard)) {
+	    			List<Card> estates = allCards.values().stream()
+	    					.filter(e -> e instanceof EstateCard)
+	    					.collect(Collectors.toList());
+	    			
+	    			for(Card c : estates) {
+	    				EstateCard es = (EstateCard)c;
+	    				if(es.getEstate().hasThisWeapon(weaponCard)) {
+	    					es.getEstate().removeWeapon(weaponCard);
+	    				}
+	    			}
+	    		}
+	    		currentEstate.addWeapon(weaponCard);
 	    		
-	    		// TODO: WeaponCard should probably have a move method too
-	    		// weapon.move() into this estate
+	    		// Move guessed player to this estate
+	    		if(!characterCard.getPlayer().getEstate().equals(currentEstate)) {
+	    			characterCard.getPlayer().setPos(currentEstate.nextAvailablePosition(board));
+	    		}
 	    		
-	    		// TODO: CharacterCard should store a reference to player
-	    		// So character.getPlayer().move() into this estate
+	    		//redraw the board with moved weapon/character
+	    		board.show();
 
 	    		// Check if a player can refute the guess
 	    		Card refutedCard = null;

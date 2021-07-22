@@ -1,5 +1,7 @@
 package swen225.murdermadness.cards;
 
+import swen225.murdermadness.Estate;
+
 /**
  * Card corresponding to a potential murder weapon
  * @author grantrona
@@ -7,7 +9,7 @@ package swen225.murdermadness.cards;
 
 public class WeaponCard implements Card{
 	
-	final private String weaponName;
+	private final String weaponName;
 	
 	public WeaponCard(String weaponName) {
 		this.weaponName = weaponName;

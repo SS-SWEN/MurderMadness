@@ -15,13 +15,13 @@ public class Position {
 		return x >= 0 && x <= 23 && y >= 0 && y <= 23;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(o instanceof Position) { 
 			Position p = (Position)o;
 			return (this.getX() == p.getX() && this.getY() == p.getY());
 		} 
 		return false;
-		
 	}
 
 	public Position(int x, int y) {

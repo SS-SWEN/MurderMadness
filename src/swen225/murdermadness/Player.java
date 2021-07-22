@@ -166,7 +166,6 @@ public class Player {
     /**
      * X and Y coordinates of the player
      */
-    //public int x, y;
 	public boolean turnOver;
     
     /**
@@ -174,8 +173,6 @@ public class Player {
      */
 	
     public void updateLocation(Position nextPos) {
-    	//this.x = p.getX();
-        //this.y = p.getY();
     	this.prevPos = this.pos;
     	this.pos = nextPos;
     }
