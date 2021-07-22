@@ -7,7 +7,7 @@ import swen225.murdermadness.view.Tile;
 import swen225.murdermadness.view.Wall;
 
 public class Estate {
-	private final List<Tile> estatePosition;
+	final List<Tile> estatePosition;
 	private final String estateName;
 	
 	// maximum x,y value, represents the top left of the estate 
