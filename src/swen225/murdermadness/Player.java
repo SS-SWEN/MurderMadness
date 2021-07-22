@@ -16,6 +16,17 @@ public class Player {
 	private Position pos;
 	private Position prevPos;
 	
+    public Estate estate;
+    
+    public Estate getEstate() {
+    	return this.estate;
+    }
+    
+    public void setEstate(Estate e) {
+    	this.estate = e;
+    }
+    
+	
 	private List<Card> hand;
 	private Set<Card> eliminations;
 	public boolean inGame;
@@ -62,6 +73,7 @@ public class Player {
 	public String getName() {
 		return this.name;
 	}
+	
 	
 	public void setInGame(boolean status) {
 		this.inGame = status;
