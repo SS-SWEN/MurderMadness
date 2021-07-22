@@ -16,7 +16,7 @@ public class Player {
 	private Position pos;
 	private Position prevPos;
 	
-    public Estate estate;
+    private Estate estate;
     
     public Estate getEstate() {
     	return this.estate;
@@ -164,14 +164,8 @@ public class Player {
 	}
     
     /**
-     * X and Y coordinates of the player
-     */
-	public boolean turnOver;
-    
-    /**
      * Updates the x and y coordinates of this player
      */
-	
     public void updateLocation(Position nextPos) {
     	this.prevPos = this.pos;
     	this.pos = nextPos;
