@@ -1,10 +1,15 @@
 package swen225.murdermadness.view;
 
 import swen225.murdermadness.MurderMadness.Direction;
+import swen225.murdermadness.cards.Card;
+import swen225.murdermadness.cards.CharacterCard;
+import swen225.murdermadness.cards.EstateCard;
+import swen225.murdermadness.cards.WeaponCard;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import swen225.murdermadness.Estate;
 import swen225.murdermadness.Player;
 
 public class Board {
@@ -214,14 +219,8 @@ public class Board {
 				
 				perilPalace.add(this.board[17][17]);// top left
 				perilPalace.add(this.board[21][21]);// bottom Right
-				
-				
-				
-				
 			}
-	
-	
-	
+
 	/**
 	 * Get the tile at a given position on the board. If the position is outside the
 	 * board dimensions, it just returns empty air.
@@ -278,6 +277,15 @@ public class Board {
     	this.show();
     	return true;
 	}
+    
+    public void moveTo(CharacterCard card, Estate estate) throws Exception {
+		Player p = card.getPlayer();
+		Position pos = estate.nextAvailablePosition(this);
+		this.board[pos.getX()][pos.getY()].setCharacter(board[p.getPos().getX()][p.getPos().getY()].getCharacter());
+        this.board[p.getPos().getX()][p.getPos().getY()].setCharacter(".");
+        p.updateLocation(pos);
+    }
+    
     
     
     

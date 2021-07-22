@@ -398,7 +398,7 @@ public class MurderMadness {
     			
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY REFUTING");
-	    		System.out.println("You are inside"+currentEstate.getName());
+	    		System.out.println("You are inside "+currentEstate.getName());
 	    		System.out.println("==============================================================");
 	    		
 	    		List<Card> weapons = new ArrayList<Card>();
@@ -419,7 +419,13 @@ public class MurderMadness {
 	    		if (weaponCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
 	    		
-	    		Display.displayPossibleCards(characters);
+	    		// Display the character cards, not including the current guessing/refuting player character 
+	    		List<Card> possibleCharacters = new ArrayList<Card>();
+	    		for(Card c : characters) {
+	    			CharacterCard ch = (CharacterCard)c;
+	    			if(!ch.getPlayer().equals(p)) {	possibleCharacters.add(c); }
+	    		}
+	    		Display.displayPossibleCards(possibleCharacters);
 	    		System.out.print("Guess a CharacterCard: ");
 	    		CharacterCard characterCard = (CharacterCard)allCards.get(Display.capitalize(input.readLine()));
 	    		
@@ -427,27 +433,21 @@ public class MurderMadness {
 	    		System.out.println("-------------------------------------------------------------");
 	    		System.out.println("YOUR GUESSES: "+weaponCard+" & "+characterCard+" inside the "+currentEstate.getName()); 
 	    		System.out.println("-------------------------------------------------------------");
-	    		
+	    	
 	    		// Move Cards into Current Estate
-	  
-	    		// remove weapon from one estate, and move it to this estate
-	    		if (!currentEstate.hasThisWeapon(weaponCard)) {
-	    			List<Card> estates = allCards.values().stream()
-	    					.filter(e -> e instanceof EstateCard)
-	    					.collect(Collectors.toList());
-	    			
-	    			for(Card c : estates) {
-	    				EstateCard es = (EstateCard)c;
-	    				if(es.getEstate().hasThisWeapon(weaponCard)) {
-	    					es.getEstate().removeWeapon(weaponCard);
-	    				}
-	    			}
+    			// remove weapon from one estate, and move it to this estate
+	    		if(!currentEstate.hasThisWeapon(weaponCard)) {
+		    		for(Card c: allCards.values()) {
+		    			if(c instanceof EstateCard) {
+		    				((EstateCard) c).getEstate().removeWeapon(weaponCard);
+		    			}
+		    		}
+		    		currentEstate.addWeapon(weaponCard);
 	    		}
-	    		currentEstate.addWeapon(weaponCard);
 	    		
 	    		// Move guessed player to this estate
-	    		if(!characterCard.getPlayer().getEstate().equals(currentEstate)) {
-	    			characterCard.getPlayer().setPos(currentEstate.nextAvailablePosition(board));
+	    		if(!currentEstate.within(characterCard.getPlayer().getPos())) {
+	    			board.moveTo(characterCard, currentEstate);
 	    		}
 	    		
 	    		//redraw the board with moved weapon/character
@@ -507,7 +507,7 @@ public class MurderMadness {
     		}
     	}
     }
-    
+   
     
 	public static void main(String[] args) {
 		new MurderMadness();

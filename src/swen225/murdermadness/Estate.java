@@ -41,7 +41,7 @@ public class Estate {
 		for(int x = topLeft.getX(); x <= botRight.getX(); x++) {
 			for(int y = topLeft.getY(); y <=botRight.getY(); y++) {
 				Position pos = new Position(x, y);
-				if(board.getTile(pos).isObstruction()) { return pos; }
+				if(!board.getTile(pos).isObstruction()) { return pos; }
 			}
 		}
 		return null;

@@ -18,7 +18,6 @@ public final class Display {
 		for (int i = 1 ; i < possibleCards.size(); i++) {
 			display.append("  ");
 			display.append(possibleCards.get(i)).append(" ");
-		    //if ( (i + 1) % 5 == 0 ) { display.append("\n"); }
 		}
 		System.out.println("Possible Cards: \n"+display);
 	}
