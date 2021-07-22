@@ -68,6 +68,8 @@ public class MurderMadness {
     	catch (IOException e) { e.printStackTrace(); }
     }
     
+    
+    
     private void runGame(int numPlayers) {
     	System.out.println("==============================================================");
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
@@ -82,7 +84,7 @@ public class MurderMadness {
     		
     		//System.out.println("DEBUG: Before Pos"+p.getPos());
     		if (p.inGame) {
-	    		onPlayerMove(p);
+	    		onPlayerMove(p);	    		
 	    		// TODO: Detect when player is inside an Estate
 	    		// If so, set/store the estate inside the player
 	    		// and ask them if they want to refute/make a guess
@@ -101,7 +103,7 @@ public class MurderMadness {
     	}
     }
     
-    private static void onPlayerMove(Player player) {
+    private void onPlayerMove(Player player) {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	player.turnOver = false;
     	System.out.println("==============================================================");
@@ -109,14 +111,25 @@ public class MurderMadness {
     	System.out.println("==============================================================");
     	while (player.hasRemainingSteps()) {
     		try {
+                Position ch = new Position(player.getPos().getX(),player.getPos().getY());
+	    		
+	    		for (Card card : allCards.values()) {
+	                if(card.getClass().isInstance(EstateCard.class)) {
+	                	if(((EstateCard) card).getEstate().within(player.getPos())) {
+	                		player.estate = ((EstateCard) card).getEstate();
+	                		System.out.println("player is in an estate");
+	                		System.out.println(player.estate.getName());
+	                	}
+	                }    
+	    		}
+	    		System.out.println("player not in estate");
 	    		System.out.println("Steps remaining: "+player.getStepsRemaining());
 	    		
 	    		String moveSummary = "invalid move!";
 	    		
 	    		System.out.print("Direction: ");
 	    		String dir = input.readLine().toLowerCase();
-	
-	    		
+
 				System.out.print("Number of Steps: ");
 	    		int steps = Integer.parseInt(input.readLine());
 	    		System.out.println("-------------------------------------------------------------");
