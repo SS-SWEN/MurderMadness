@@ -1,9 +1,19 @@
 package swen225.murdermadness.view;
 
 import swen225.murdermadness.MurderMadness.Direction;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import swen225.murdermadness.Player;
 
 public class Board {
+	
+	List<Tile> hauntedHouse = new ArrayList<Tile>();
+    List<Tile> manicManor = new ArrayList<Tile>();
+    List<Tile> villaCelia = new ArrayList<Tile>();
+    List<Tile> calamitycastle = new ArrayList<Tile>();
+    List<Tile> perilPalace = new ArrayList<Tile>();
 	
 	private Tile[][] board;
 	String layout =
@@ -188,6 +198,25 @@ public class Board {
 				this.board[19][21] = new Wall(new Position(19,21),"P");
 				this.board[20][21] = new Wall(new Position(20,21),"P");
 				this.board[21][21] = new Wall(new Position(21,21),"P");
+				
+				hauntedHouse.add(this.board[2][2]);// top left
+				hauntedHouse.add(this.board[6][6]);// bottom Right
+				
+				manicManor.add(this.board[17][2]);// top left
+				manicManor.add(this.board[21][6]);// bottom Right
+				
+				villaCelia.add(this.board[9][10]);// top left
+				villaCelia.add(this.board[14][13]);// bottom Right
+				
+				calamitycastle.add(this.board[2][17]);// top left
+				calamitycastle.add(this.board[6][21]);// bottom Right
+				
+				perilPalace.add(this.board[17][17]);// top left
+				perilPalace.add(this.board[21][21]);// bottom Right
+				
+				
+				
+				
 			}
 	
 	
