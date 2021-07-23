@@ -1,6 +1,4 @@
 package swen225.murdermadness.cards;
-import java.util.Collections;
-import java.util.List;
 
 import swen225.murdermadness.view.Position;
 

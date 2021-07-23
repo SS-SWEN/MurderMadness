@@ -1,10 +1,7 @@
 package swen225.murdermadness.view;
 
 import swen225.murdermadness.MurderMadness.Direction;
-import swen225.murdermadness.cards.Card;
 import swen225.murdermadness.cards.CharacterCard;
-import swen225.murdermadness.cards.EstateCard;
-import swen225.murdermadness.cards.WeaponCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +44,14 @@ public class Board {
 			". . . . . . . . . . . . . . . . . . . . . . . ." + // 22
 			". . . . . . . . . . . . . . . . . . . . . . . ." ; // 23
 	
-	public void show() {
+	public void show() {		
 		for (int y = 0; y <= 23; y++) {
 			for (int x = 0; x <= 23; x++) {
+				System.out.print(" ");
 				System.out.print(this.board[x][y].getCharacter());
+				System.out.print(" ");
 			}
-			System.out.println ();
+			System.out.println();
 		}
 	}
 	
@@ -256,6 +255,9 @@ public class Board {
 		}
     }
     
+    /**
+     * Move the player on the board, returns false if the movement was 
+     */
     public boolean movePlayer(Player player, Direction direction, int steps) {
     	for (int i = 0;i < steps;i++) {
     		Tile next = getNewLocation(player.getPos(), direction);
@@ -264,13 +266,13 @@ public class Board {
 	    		System.out.println("There is a wall there!");
 	    		return false; 
 	    	}
-	    	
-	    	if(next.getPos().equals(player.getPrevPos())) {
-	    		System.out.println("You cannot go back a step during this turn!");
+	    	if(player.getPrevPos().contains(next.getPos())) {
+	    		System.out.println("This position has already been visited this turn!");
 	    		return false;
-	    	}
+	    	}	
+	    	
 	        this.board[next.getPos().getX()][next.getPos().getY()].setCharacter(board[player.getPos().getX()][player.getPos().getY()].getCharacter());
-	        this.board[player.getPos().getX()][player.getPos().getY()].setCharacter(".");
+	        this.board[player.getPos().getX()][player.getPos().getY()].setCharacter("x");
 	    	player.updateLocation(next.getPos());
 	    	player.decrementStep();
     	}
@@ -278,7 +280,10 @@ public class Board {
     	return true;
 	}
     
-    public void moveTo(CharacterCard card, Estate estate) throws Exception {
+    /**
+     * Moves a character located outside a stated estate into the estate
+     */
+    public void moveTo(CharacterCard card, Estate estate){
 		Player p = card.getPlayer();
 		Position pos = estate.nextAvailablePosition(this);
 		this.board[pos.getX()][pos.getY()].setCharacter(board[p.getPos().getX()][p.getPos().getY()].getCharacter());
@@ -286,6 +291,14 @@ public class Board {
         p.updateLocation(pos);
     }
     
+    /**
+     * Removes player's trail of visited tiles (x) during their turn
+     */
+    public void removeTrail(Player p) {
+    	for(Position pos : p.getPrevPos()) {
+    		this.board[pos.getX()][pos.getY()].setCharacter(".");
+    	}
+    }
     
     
     

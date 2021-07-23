@@ -1,12 +1,11 @@
 package swen225.murdermadness;
 import java.util.ArrayList;
+
 import java.util.List;
 
 import swen225.murdermadness.cards.WeaponCard;
 import swen225.murdermadness.view.Board;
 import swen225.murdermadness.view.Position;
-import swen225.murdermadness.view.Tile;
-import swen225.murdermadness.view.Wall;
 
 public class Estate {
 	private final String estateName;

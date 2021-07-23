@@ -2,6 +2,7 @@ package swen225.murdermadness;
 
 import java.io.BufferedReader;
 
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.Scanner;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -90,6 +91,8 @@ public class MurderMadness {
 					    		System.out.println("CURRENT INFO SHEET: ");
 					    		System.out.println("Hand: "+p.getHand()+" Eliminations: "+p.getEliminations());
 					    		System.out.println("-------------------------------------------------------------");
+					    		
+					    		//Check if the player wants to make an accusation or guess
 					    		System.out.print("Would you like to guess or accuse? (G/A): ");
 								String confirm = input.readLine();
 								
@@ -126,11 +129,19 @@ public class MurderMadness {
     	System.out.println("==============================================================");
     	System.out.println(player.getName()+"'s Turn");
     	System.out.println("==============================================================");
-    	while (player.hasRemainingSteps()) {
+    	
+    	//reset players previous steps for this turn
+    	player.resetPrev();
+    	boolean askAccuse = true; 
+    	
+    	outer: {
+    		while (player.hasRemainingSteps()) {
+    	
     		try {	    		
 	    		System.out.println("Steps remaining: "+player.getStepsRemaining());
 	    		
 	    		String moveSummary = "invalid move!";
+	    		
 	    		
 	    		System.out.print("Direction: ");
 	    		String dir = input.readLine().toLowerCase();
@@ -167,25 +178,45 @@ public class MurderMadness {
 	    		System.out.println("==============================================================");
 	    		System.out.println(moveSummary);
 	    		System.out.println("-------------------------------------------------------------");
-	    		
-	    		for (Card card : allCards.values()) {
-	                if(card instanceof EstateCard) {
-	                	EstateCard es = (EstateCard)card;
-	                	if(es.getEstate().within(player.getPos())) {
-	                		player.setEstate(es.getEstate());
-	                		System.out.println("You have entered "+es.getEstate().getName());
-	                		player.setStepsRemaining(0); // Force 0 steps
-	                		break;
-	                	} else {
-	                		player.setEstate(null);
-	                	}
-	                }    
+	    		if(askAccuse) {
+	    			for (Card card : allCards.values()) {
+	    				if(card instanceof EstateCard) {
+	    					EstateCard es = (EstateCard)card;
+	    					if(es.getEstate().within(player.getPos())) {
+	    						player.setEstate(es.getEstate());
+	    						System.out.println("You have entered "+es.getEstate().getName());
+
+	    						// ask if player wishes to make an guess/accusation now
+	    						System.out.print("Would you like to make a guess/accuse now? (y/n): ");
+	    						String confirm = input.readLine();
+	    						// break and go to refute/accuse
+	    						if(confirm.equalsIgnoreCase("y")) { break outer; } 
+	    						// else ask player if they want to keep moving
+	    						else {
+	    							player.setEstate(null);
+	    							System.out.print("Would you like to keep moving? (y/n): ");
+	    							confirm = input.readLine();
+	    							if(confirm.equalsIgnoreCase("y")) { 
+	    								askAccuse = false; 
+	    								break;  
+	    							}
+	    							else { 
+	    								break outer;
+	    							}	
+	    						}
+	    					} else {
+	    						player.setEstate(null);
+	    					}
+	    				}    
+	    			}
 	    		}
     		} catch(Exception e) {
     			System.out.println("Invalid Input: "+e);
     			continue;
     		}
     	}
+    	}
+    	board.removeTrail(player);
     }
     
     private void setup() {

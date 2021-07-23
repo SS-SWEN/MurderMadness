@@ -37,7 +37,7 @@ public class Position {
 		return "("+this.x+","+this.y+")";
 	}
 	
-	//playert movement --------------------
+	//player movement --------------------
 	/**
      * Not null if a player moves onto, or is on this tile
      */

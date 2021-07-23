@@ -1,7 +1,5 @@
 package swen225.murdermadness.cards;
 
-import swen225.murdermadness.Estate;
-
 /**
  * Card corresponding to a potential murder weapon
  * @author grantrona

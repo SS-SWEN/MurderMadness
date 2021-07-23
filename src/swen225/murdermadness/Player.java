@@ -14,7 +14,8 @@ public class Player {
 	
 	final private String name;
 	private Position pos;
-	private Position prevPos;
+	private List<Position> prevPositions;
+    private int stepsRemaining = 0;
 	
     private Estate estate;
     
@@ -115,11 +116,6 @@ public class Player {
         return "" + s.charAt(0);
     }
     
-	/**
-     * Number of steps this player has left
-     */
-    private int stepsRemaining = 0;
-    
     /**
      * Check whether this player still has steps
      */
@@ -145,29 +141,28 @@ public class Player {
     public int getStepsRemaining() {
         return stepsRemaining;
     }
-    
-    
+     
     public void setPos(Position pos) {
 		this.pos = pos;
-	}
-	
-	public void setPrevPos(Position prev) {
-		this.prevPos = prev;
 	}
 	
 	public Position getPos() {
 		return this.pos;
 	}
 	
-	public Position getPrevPos() {
-		return this.prevPos;
+	public List<Position> getPrevPos() {
+		return this.prevPositions;
+	}
+	
+	public void resetPrev() {
+		this.prevPositions = new ArrayList<Position>();
 	}
     
     /**
      * Updates the x and y coordinates of this player
      */
     public void updateLocation(Position nextPos) {
-    	this.prevPos = this.pos;
+    	this.prevPositions.add(this.pos);
     	this.pos = nextPos;
     }
     
