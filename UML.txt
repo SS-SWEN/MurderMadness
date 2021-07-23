@@ -1,0 +1,461 @@
+class MurderMadness
+{
+  boolean isOngoing;
+  enum Direction;
+  int numPlayers;
+  List characterNames;
+  List weaponNames;
+  List estateNames;
+  1 -- 1 Board;
+  1 -> 3 Card murderSolution;
+  1 -> * Card allCards;
+  1 -- * Player players;
+  
+  public void runGame(int numPlayers){
+
+  }
+  
+  public void onPlayerMove(Player p){
+
+  }
+  
+  public void setup(){
+
+  }
+
+  public void initializeCards(){
+
+  }
+  
+  public void onAccusation(Player p){
+
+  }
+  
+  public void onRefute(Player p){
+  
+  }
+  
+  public static void main(String args[]) {
+    new MurderMadness();
+  }
+}
+
+class Board
+{
+  1 -> * Tile hauntedHouse;
+  1 -> * Tile manicManor;
+  1 -> * Tile villaCelia;
+  1 -> * Tile calamityCastle;
+  1 -> * Tile perilPalace;
+  1 -> * Tile board;
+  
+  public void show(){
+  }
+  
+  public Tile getTile(Position position){
+  }
+  
+  public Tile getNewLocation(Position current, Direction direction){
+  }
+  
+  public boolean movePlayer(Player player, Direction direction, int steps){
+  }
+  
+  pubic void moveTo(CharacterCard card, Estate estate){
+  }
+  
+  public void removeTrail(Player p){
+  }
+  
+  
+}
+
+class Estate
+{
+  
+ 1 -- * WeaponCard weapons;
+ estateName;
+ Position topLeft;
+ Position botRight;
+   
+  public boolean within(Position pos){
+  }
+  
+  public String getName(){
+  }
+  
+  public Position nextAvailablePosition(Board board){
+  }
+  
+  public void addWeapon(WeaponCard weapon){
+  }
+  
+  public boolean hasThisWeapon(WeaponCard weapon){
+  }
+  
+  public void removeWeapon(WeaponCard weapon){
+  }
+  
+  public boolean equals(Object o){
+  }
+}
+
+interface Tile
+{
+  public boolean isObstruction();
+  
+  public Position getPos();
+  
+  public String getCharacter();
+  
+  public void setCharacter(String character);
+  
+  public String getPlayer();
+}
+
+class NormalTile 
+{
+  isA Tile;
+  
+  String character;
+  Player player;
+  Position normalTilePosition;
+  
+  boolean isObstruction(){
+  }
+  
+  Position getPos(){
+  }
+  
+  String getPlayerName(Player p){
+  }
+  
+}
+
+class Wall
+{
+  isA Tile;
+  
+  Position wallPosition;
+  String character;
+  
+  boolean isObstruction(){
+  }
+  
+  Position getPos(){
+  }
+}
+  
+
+class Position
+{
+  int x;
+  int y;
+  Player player;
+  
+  boolean isValid(){
+  }
+  
+  boolean equals(Object o){
+  }
+  
+  int xySum(){
+  }
+  
+  String toString(){
+  }
+  
+}
+
+class Player
+{
+  String name;
+  Position pos;
+  1 -> * Position prevPositions;
+  Estate estate;
+  1 -> * Card hand;
+  1 -> * Card eliminations;
+  boolean inGame;
+  int stepsRemaining;
+  
+  
+  String showHand(){
+  }
+  
+  List getHand(){
+  }
+  
+  Set getEliminations(){
+  }
+  
+  List countRefutableCards(Card weapon, Card character, Card guess){
+  }
+  
+  void setInGame(boolean status){
+  }
+  
+  void addToHand(Card c){
+  }
+  
+  void addToElimination(Card c){
+    }
+  
+  void setHand(List cards){
+  }
+  
+  String toString(){
+  }
+  
+  String display(){
+  }
+  
+  boolean hasRemainingSteps(){
+  }
+  
+  void setStepsRemaining(int steps){
+  }
+  
+  void decrementStep(){
+  }
+  
+  List getPrevPos()
+  {}
+  
+  void resetPrev(){
+  }
+  
+  void updateLocation(Position nextPos){
+  }
+}
+
+class Display
+{
+  String capitalize(String input){
+  }
+  
+  void displayPossibleCards(List possibleCards){
+  }
+}
+
+interface Card{
+  String get description();
+}
+
+class CharacterCard
+{
+  isA Card;
+  
+  String character;
+  Player player;
+  
+  String getDescription(){
+  }
+  
+  String toString(){
+  }
+}
+
+class EstateCard
+{
+  isA Card;
+  
+  Estate estate;
+  
+  
+  String getDescription(){
+  }
+  
+  String toString(){
+  }
+}
+
+class WeaponCard
+{
+  isA Card;
+  
+  String weaponName;
+  
+  String getDescription(){
+  }
+  
+  String toString(){
+  }
+}
+
+class Character
+{
+  String name;
+  1 -> 1 Position pos;
+  1 -> 0..1 Position prevPos;
+}
+
+namespace -;
+
+
+class MurderMadness
+{
+  position 722 0 223.611 275.208;
+}
+
+class Estate
+{
+  position 177 754 305 239.896;
+  position.association Estate__Tile:estatePosition 0,28 109,14;
+}
+
+class Position
+{
+  position 958 830 202 186.927;
+}
+
+class MurderMadness
+{
+  position 722 0 223.611 275.208;
+}
+
+class NormalTile
+{
+  position 1455 667 209 185.938;
+}
+
+class Wall
+{
+  position 1228 666 203 133.958;
+}
+
+class MurderMadness
+{
+  position 722 0 223.611 275.208;
+  position.association Card:murderSolution__MurderMadness 1,28 15,0;
+  position.association Board__MurderMadness 224,16 0,3;
+  position.association MurderMadness__Player:players 104,275 158,0;
+  position.association Card:allCards__MurderMadness 0,92 88,0;
+}
+
+class Estate
+{
+  position 177 754 305 239.896;
+}
+
+class NormalTile
+{
+  position 1455 667 209 185.938;
+}
+
+class Wall
+{
+  position 1228 666 203 133.958;
+}
+
+class Position
+{
+  position 958 830 202 186.927;
+}
+
+class Estate
+{
+  position 177 754 305 239.896;
+}
+
+class Estate
+{
+  position.association Estate__Tile:estatePosition 0,28 109,14;
+    position.association Estate__WeaponCard:weapons 154,0 101,116;
+position 177 754 305 239.896;
+}
+
+class Wall
+{
+  position 1228 666 203 133.958;
+}
+
+class Position
+{
+  position 958 830 202 186.927;
+}
+
+class Player
+{
+  position 668 304 328 434.115;
+  position.association Player__Position:prevPositions 314,434 25,0;
+  position.association Card:hand__Player 0,79 110,60;
+  position.association Card:eliminations__Player 0,25 110,13;
+}
+
+class Display
+{
+  position 1227 36 252 98.6458;
+}
+
+class CharacterCard
+{
+  position 446 573 199 133.958;
+}
+
+class EstateCard
+{
+  position 0 575 199 116.302;
+}
+
+class WeaponCard
+{
+  position 230 576 199 116.302;
+}
+
+class Character
+{
+  position 1073 304 112.483 80.9896;
+  position.association Character__Position:pos 86,81 201,0;
+  position.association Character__Position:prevPos 0,74 116,0;
+}
+
+class Board
+{
+  position 1261 191 321 151.615;
+  position.association Board__Tile:hauntedHouse 286,152 109,24;
+  position.association Board__Tile:manicManor 201,152 93,0;
+  position.association Board__Tile:villaCelia 116,152 8,0;
+  position.association Board__Tile:calamityCastle 7,152 0,61;
+  position.association Board__Tile:perilPalace 34,152 0,25;
+  position.association Board__Tile:board 313,152 109,56;
+}
+
+class MurderMadness
+{
+  position 722 0 223.611 275.208;
+}
+
+class Board
+{
+  position 1261 191 321 151.615;
+}
+
+class MurderMadness
+{
+  position 722 0 223.611 275.208;
+}
+
+class Board
+{
+  position 1261 191 321 151.615;
+}
+
+class Estate
+{
+  position 177 754 305 239.896;
+}
+
+class NormalTile
+{
+  position 1455 667 209 185.938;
+}
+
+class Wall
+{
+  position 1228 666 203 133.958;
+}
+
+class Position
+{
+  position 958 830 202 186.927;
+}//$?[End_of_model]$?
