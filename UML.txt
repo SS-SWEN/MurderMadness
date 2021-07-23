@@ -327,7 +327,7 @@ class MurderMadness
 {
   position 722 0 223.611 275.208;
   position.association Card:murderSolution__MurderMadness 1,28 15,0;
-  position.association Board__MurderMadness 224,16 0,3;
+  position.association Board__MurderMadness 224,26 0,3;
   position.association MurderMadness__Player:players 104,275 158,0;
   position.association Card:allCards__MurderMadness 0,92 88,0;
 }
@@ -378,7 +378,7 @@ class Player
 {
   position 668 304 328 434.115;
   position.association Player__Position:prevPositions 314,434 25,0;
-  position.association Card:hand__Player 0,79 110,60;
+  position.association Card:hand__Player 0,79 110,59;
   position.association Card:eliminations__Player 0,25 110,13;
 }
 
@@ -406,18 +406,18 @@ class Character
 {
   position 1073 304 112.483 80.9896;
   position.association Character__Position:pos 86,81 201,0;
-  position.association Character__Position:prevPos 0,74 116,0;
+  position.association Character__Position:prevPos 0,73 116,0;
 }
 
 class Board
 {
-  position 1261 191 321 151.615;
-  position.association Board__Tile:hauntedHouse 286,152 109,24;
-  position.association Board__Tile:manicManor 201,152 93,0;
-  position.association Board__Tile:villaCelia 116,152 8,0;
-  position.association Board__Tile:calamityCastle 7,152 0,61;
-  position.association Board__Tile:perilPalace 34,152 0,25;
-  position.association Board__Tile:board 313,152 109,56;
+  position 1279 171 321 42.9688;
+  position.association Board__Tile:hauntedHouse 187,150 78,0;
+  position.association Board__Tile:manicManor 306,150 109,67;
+  position.association Board__Tile:villaCelia 288,150 109,35;
+  position.association Board__Tile:calamityCastle 11,150 0,63;
+  position.association Board__Tile:perilPalace 24,150 0,38;
+  position.association Board__Tile:board 136,150 28,0;
 }
 
 class MurderMadness
@@ -427,7 +427,7 @@ class MurderMadness
 
 class Board
 {
-  position 1261 191 321 151.615;
+  position 1279 171 321 42.9688;
 }
 
 class MurderMadness
@@ -437,7 +437,7 @@ class MurderMadness
 
 class Board
 {
-  position 1261 191 321 151.615;
+  position 1279 171 321 42.9688;
 }
 
 class Estate
@@ -458,4 +458,4 @@ class Wall
 class Position
 {
   position 958 830 202 186.927;
-}//$?[End_of_model]$?
+}
