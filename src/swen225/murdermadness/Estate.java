@@ -36,11 +36,14 @@ public class Estate {
 		this.botRight = botRight;
 	}
 	
+	/**
+	 * Find the next position within the estate which is free
+	 */
 	public Position nextAvailablePosition(Board board) {
-		for(int x = topLeft.getX(); x <= botRight.getX(); x++) {
-			for(int y = topLeft.getY(); y <=botRight.getY(); y++) {
+		for(int x = topLeft.getX()+1; x < botRight.getX(); x++) {
+			for(int y = topLeft.getY()+1; y < botRight.getY(); y++) {
 				Position pos = new Position(x, y);
-				if(!board.getTile(pos).isObstruction()) { return pos; }
+				if(!board.getTile(pos).isObstruction() && board.getTile(pos).getCharacter().equals(".")) { return pos; }
 			}
 		}
 		return null;

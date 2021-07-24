@@ -56,9 +56,9 @@ public class MurderMadness {
     	try { 
     		while(true) {
     			numPlayers = Integer.parseInt(input.readLine());
-    			if(numPlayers > 0 && numPlayers < 5) { break; }
+    			if(numPlayers == 4 || numPlayers == 3) { break; }
     			else {
-    				System.out.println("Invalid number of players; Please input between 1-4.");
+    				System.out.println("Invalid number of players; Please input between 3-4.");
     			}
     		}
     		setup();
@@ -69,8 +69,9 @@ public class MurderMadness {
     	catch (IOException e) { e.printStackTrace(); }
     }
     
-    
-    
+    /**
+     * Run the game
+     */
     private void runGame(int numPlayers) {
     	System.out.println("==============================================================");
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
@@ -123,6 +124,10 @@ public class MurderMadness {
     	}
     }
     
+    /**
+	 * Ask the player which direction to move, and how many steps. Player is then
+	 * moved across the board according to input
+     */
     private void onPlayerMove(Player player) {
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	board.show();
@@ -219,6 +224,9 @@ public class MurderMadness {
     	board.removeTrail(player);
     }
     
+    /**
+     * Setup the initial game (Players, Board and Cards)
+     */
     private void setup() {
     	List<String> remainingChars = new ArrayList<String>();
     	remainingChars.addAll(characterNames);

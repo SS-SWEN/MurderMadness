@@ -44,6 +44,9 @@ public class Board {
 			". . . . . . . . . . . . . . . . . . . . . . . ." + // 22
 			". . . . . . . . . . . . . . . . . . . . . . . ." ; // 23
 	
+	/**
+	 * Redraws the board onto the console
+	 */
 	public void show() {		
 		for (int y = 0; y <= 23; y++) {
 			for (int x = 0; x <= 23; x++) {
@@ -256,21 +259,30 @@ public class Board {
     }
     
     /**
-     * Move the player on the board, returns false if the movement was 
+     * Move the player on the board, returns false if the movement was invalid
      */
     public boolean movePlayer(Player player, Direction direction, int steps) {
     	for (int i = 0;i < steps;i++) {
     		Tile next = getNewLocation(player.getPos(), direction);
-	    	if(next == null) { return false; }
-	    	if(next.isObstruction()) {
-	    		System.out.println("There is a wall there!");
-	    		return false; 
-	    	}
-	    	if(player.getPrevPos().contains(next.getPos())) {
-	    		System.out.println("This position has already been visited this turn!");
-	    		return false;
-	    	}	
-	    	
+    		
+    		// return false to state an invalid movement of player
+    		if(next == null) { 
+    			return false; 
+    			}
+    		if(next.isObstruction()) {
+    			System.out.println("There is a wall there!");
+    			return false; 
+    		}
+    		if(player.getPrevPos().contains(next.getPos())) {
+    			System.out.println("This position has already been visited this turn!");
+    			return false;
+    		}	
+    		if(!next.getCharacter().equals(".")) { 
+    			System.out.println("A character is already in this spot!");
+    			return false;
+    		}
+    		
+    		//move player to next tile, reset last tile to x, indicating they cannot go back there this turn
 	        this.board[next.getPos().getX()][next.getPos().getY()].setCharacter(board[player.getPos().getX()][player.getPos().getY()].getCharacter());
 	        this.board[player.getPos().getX()][player.getPos().getY()].setCharacter("x");
 	    	player.updateLocation(next.getPos());
@@ -289,6 +301,8 @@ public class Board {
 		this.board[pos.getX()][pos.getY()].setCharacter(board[p.getPos().getX()][p.getPos().getY()].getCharacter());
         this.board[p.getPos().getX()][p.getPos().getY()].setCharacter(".");
         p.updateLocation(pos);
+        
+        System.out.println(p.getName()+" has been moved to "+estate.getName());
     }
     
     /**
