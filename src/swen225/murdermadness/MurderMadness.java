@@ -77,7 +77,7 @@ public class MurderMadness {
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
     	System.out.println("==============================================================");
     	board = new Board();
-		System.out.println("SOLUTION: "+murderSolution);
+    	System.out.println(murderSolution);
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while(isOngoing) {
     		for (Player p: players) {
@@ -88,9 +88,8 @@ public class MurderMadness {
 			    	if (p.getEstate() != null) {
 			    		while(true) {
 				    		try {
+				    			System.out.println("-------------------------------------------------------------");
 					    		System.out.println("You may now make a guess or attempt to solve the murder scenario");
-					    		System.out.println("CURRENT INFO SHEET: ");
-					    		System.out.println("Hand: "+p.getHand()+" Eliminations: "+p.getEliminations());
 					    		System.out.println("-------------------------------------------------------------");
 					    		
 					    		//Check if the player wants to make an accusation or guess
@@ -133,6 +132,7 @@ public class MurderMadness {
     	board.show();
     	System.out.println("==============================================================");
     	System.out.println(player.getName()+"'s Turn");
+    	System.out.println("Hand: "+player.getHand()+" Eliminations: "+player.getEliminations());
     	System.out.println("==============================================================");
     	
     	//reset players previous steps for this turn
@@ -144,10 +144,10 @@ public class MurderMadness {
     	
     		try {	    		
 	    		System.out.println("Steps remaining: "+player.getStepsRemaining());
-	    		
+	    		System.out.println("W = UP | A = LEFT | S = DOWN | D = RIGHT");
 	    		String moveSummary = "invalid move!";
 	    		
-	    		
+	    		System.out.println("-------------------------------------------------------------");
 	    		System.out.print("Direction: ");
 	    		String dir = input.readLine().toLowerCase();
 
@@ -192,6 +192,7 @@ public class MurderMadness {
 	    						System.out.println("You have entered "+es.getEstate().getName());
 
 	    						// ask if player wishes to make an guess/accusation now
+	    						System.out.println("Hand: "+player.getHand()+" Eliminations: "+player.getEliminations());
 	    						System.out.print("Would you like to make a guess/accuse now? (y/n): ");
 	    						String confirm = input.readLine();
 	    						// break and go to refute/accuse
@@ -377,7 +378,7 @@ public class MurderMadness {
 	    		List<Card> weapons = new ArrayList<Card>();
 	    		List<Card> characters = new ArrayList<Card>();
 	    		for (Card c: allCards.values()) {
-	    			if (!p.getEliminations().contains(c)) {
+	    			if (!p.getEliminations().contains(c) && !p.getHand().contains(c)) {
 	    				if (c instanceof WeaponCard)
 	    					weapons.add(c);
 	    				if (c instanceof CharacterCard)
@@ -438,12 +439,14 @@ public class MurderMadness {
     			System.out.println("==============================================================");
     			System.out.println("YOU ARE CURRENTLY REFUTING");
 	    		System.out.println("You are inside "+currentEstate.getName());
+	    		System.out.println("Hand: "+p.getHand()+" Eliminations: "+p.getEliminations());
+	    		System.out.println("Possible Cards are cards that do not exist in your hand & eliminations");
 	    		System.out.println("==============================================================");
 	    		
 	    		List<Card> weapons = new ArrayList<Card>();
 	    		List<Card> characters = new ArrayList<Card>();
 	    		for (Card c: allCards.values()) {
-	    			if (!p.getEliminations().contains(c)) {
+	    			if (!p.getEliminations().contains(c) && !p.getHand().contains(c)) {
 	    				if (c instanceof WeaponCard)
 	    					weapons.add(c);
 	    				if (c instanceof CharacterCard)
@@ -458,13 +461,7 @@ public class MurderMadness {
 	    		if (weaponCard == null) throw new NoSuchElementException("Card does not exist");
 	    		System.out.println("-------------------------------------------------------------");
 	    		
-	    		// Display the character cards, not including the current guessing/refuting player character 
-	    		List<Card> possibleCharacters = new ArrayList<Card>();
-	    		for(Card c : characters) {
-	    			CharacterCard ch = (CharacterCard)c;
-	    			if(!ch.getPlayer().equals(p)) {	possibleCharacters.add(c); }
-	    		}
-	    		Display.displayPossibleCards(possibleCharacters);
+	    		Display.displayPossibleCards(characters);
 	    		System.out.print("Guess a CharacterCard: ");
 	    		CharacterCard characterCard = (CharacterCard)allCards.get(Display.capitalize(input.readLine()));
 	    		
@@ -483,7 +480,7 @@ public class MurderMadness {
 		    		}
 		    		currentEstate.addWeapon(weaponCard);
 	    		}
-	    		
+
 	    		// Move guessed player to this estate
 	    		if(!currentEstate.within(characterCard.getPlayer().getPos())) {
 	    			board.moveTo(characterCard, currentEstate);
@@ -497,11 +494,12 @@ public class MurderMadness {
 	    		List<String> order = characterNames.stream()
 	    				.filter(character -> !character.equalsIgnoreCase(p.getName()))
 	    				.collect(Collectors.toList()); // Filter current player & Ensures an order for guessing
-
+	    		
+	    		List<Card> options = new ArrayList<Card>();
 	    		for (String pName: order) {
 	    			CharacterCard pChar = (CharacterCard)allCards.get(pName);
 	    			Player otherPlayer = pChar.getPlayer();
-	    			List<Card> options = otherPlayer.countRefutableCards(weaponCard, characterCard, estateCard);
+	    			options = otherPlayer.countRefutableCards(weaponCard, characterCard, estateCard);
 	    			
 		    		if (options.size() > 1) {
 		    			System.out.println(otherPlayer+" can refute one of your guesses");
@@ -519,15 +517,19 @@ public class MurderMadness {
 					    		System.out.println("Enter a number from 1-"+options.size()+" to pick the card");
 					    		System.out.print("Choose ONE card to refute a guess: ");
 					    		int chosenCard = Integer.parseInt(input.readLine());
-					    		refutedCard = options.get(chosenCard);
-					    		break;
+					    		if (chosenCard > 0 && chosenCard <= options.size()) {
+					    			refutedCard = options.get(chosenCard-1);
+					    			break;
+					    		}
+					    		System.out.println("Invalid Number");
+					    		continue;
 				    		} catch(Exception e) {e.printStackTrace();continue;}
 				    	}
 		    		} else if (!options.isEmpty()) {
 		    			System.out.println(otherPlayer+" has refuted one of your guesses");
 		    			refutedCard = options.get(0);
+		    			break;
 		    		}
-		    		break;
 	    		}
 	    		
 	    		if (refutedCard != null) {
