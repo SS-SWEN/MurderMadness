@@ -314,25 +314,6 @@ public class Board {
     	}
     }
     
-    /**
-     * Removes character from board if no Player controls it.
-     */
-    public void removeCharacter(String name) {
-    	if (name.equals("Lucilla")) {
-    		this.board[11][1] = new NormalTile(new Position(11,1), "."); //
-    	}
-    	else if(name.equals("Percy")) {
-    		this.board[22][14] = new NormalTile(new Position(22,14), ".");
-    	}
-    	else if(name.equals("Melina")) {
-    		this.board[9][22] = new NormalTile(new Position(9,22), ".");
-    	}
-    	else {
-    		this.board[1][9] = new NormalTile(new Position(1,9), ".");
-    	}
-    }
-
-    
     
     
 
