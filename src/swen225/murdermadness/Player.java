@@ -96,7 +96,6 @@ public class Player {
 		this.name = name;
 		hand = new ArrayList<Card>();
 		eliminations = new HashSet<Card>();
-		prevPositions = new ArrayList<Position>();
 		inGame = true;
 	}
 	

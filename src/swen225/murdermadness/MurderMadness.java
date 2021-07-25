@@ -18,6 +18,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.stream.events.Characters;
+
 import swen225.murdermadness.cards.Card;
 import swen225.murdermadness.cards.CharacterCard;
 import swen225.murdermadness.cards.EstateCard;
@@ -77,6 +79,18 @@ public class MurderMadness {
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
     	System.out.println("==============================================================");
     	board = new Board();
+    	
+    	List<String> availableCharacters = new ArrayList<>();
+    	for (Player p : players) {
+    		availableCharacters.add(p.getName());
+    	}
+        for (String c : characterNames) {
+        	if (!availableCharacters.contains(c)) {
+        		board.removeCharacter(c);
+        	}
+        }
+
+    	
     	System.out.println(murderSolution);
     	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     	while(isOngoing) {
