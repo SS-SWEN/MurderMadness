@@ -79,7 +79,7 @@ public class MurderMadness {
     	System.out.println("A Game of MurderMadness has just started: "+numPlayers+" players");
     	System.out.println("==============================================================");
     	board = new Board();
-    	
+  
     	List<String> availableCharacters = new ArrayList<>();
     	for (Player p : players) {
     		availableCharacters.add(p.getName());
@@ -512,6 +512,7 @@ public class MurderMadness {
 	    		List<Card> options = new ArrayList<Card>();
 	    		for (String pName: order) {
 	    			CharacterCard pChar = (CharacterCard)allCards.get(pName);
+	    			if (pChar == null) continue;
 	    			Player otherPlayer = pChar.getPlayer();
 	    			options = otherPlayer.countRefutableCards(weaponCard, characterCard, estateCard);
 	    			
@@ -539,6 +540,7 @@ public class MurderMadness {
 					    		continue;
 				    		} catch(Exception e) {e.printStackTrace();continue;}
 				    	}
+				    	break;
 		    		} else if (!options.isEmpty()) {
 		    			System.out.println(otherPlayer+" has refuted one of your guesses");
 		    			refutedCard = options.get(0);
